@@ -1,0 +1,182 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'package:shop_app/core/models/brand.dart';
+import 'package:shop_app/features/home/models/cat_service.dart';
+import 'package:shop_app/core/models/service.dart';
+
+class HomeController extends GetxController {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  final List<CatService> catServices = [];
+  final List<Service> services = [];
+  final List<Brand> brands = [];
+  bool isLoading = false;
+  String? errorMessage;
+
+  List<CatService> get categories => catServices;
+
+
+  int selectedCategory = 0;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initializeHomeData();
+  }
+
+  Future<void> _initializeHomeData() async {
+    await fetchCatServices();
+  }
+
+  Future<void> fetchCatServices() async {
+    try {
+      isLoading = true;
+      update();
+
+      final snapshot = await _firestore
+          .collection('catServices')
+          .orderBy('name')
+          .get();
+
+      catServices
+        ..clear()
+        ..addAll(snapshot.docs.map(CatService.fromDocument));
+
+      errorMessage = null;
+    } catch (e, stackTrace) {
+      errorMessage = e.toString();
+      debugPrint('Failed to fetch catServices: $e');
+      debugPrint(stackTrace.toString());
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+
+  Future<void> fetchServices() async {
+    try {
+      final snapshot = await _firestore
+          .collection('services')
+          .orderBy('name')
+          .get();
+
+      services
+        ..clear()
+        ..addAll(snapshot.docs.map(Service.fromDocument));
+      update();
+    } catch (e, stackTrace) {
+      debugPrint('Failed to fetch services: $e');
+      debugPrint(stackTrace.toString());
+    }
+  }
+
+  Future<void> fetchBrands() async {
+    try {
+      final snapshot = await _firestore
+          .collection('brands')
+          .orderBy('name')
+          .get();
+
+      brands
+        ..clear()
+        ..addAll(snapshot.docs.map(Brand.fromDocument));
+      update();
+    } catch (e, stackTrace) {
+      debugPrint('Failed to fetch brands: $e');
+      debugPrint(stackTrace.toString());
+    }
+  }
+
+  void selectCategory(int index) {
+    if (index < 0 || index >= catServices.length) return;
+    selectedCategory = index;
+    update();
+  }
+
+  Future<void> seedTestServices({bool overwrite = false}) async {
+    if (catServices.isEmpty) {
+      await fetchCatServices();
+    }
+
+    for (final category in catServices) {
+      for (var i = 0; i < 10; i++) {
+        final serviceId = '${category.id}_service_${i + 1}';
+        final docRef = _firestore.collection('services').doc(serviceId);
+
+        if (!overwrite) {
+          final exists = await docRef.get();
+          if (exists.exists) {
+            continue;
+          }
+        }
+
+        final service = Service(
+          id: serviceId,
+          name: 'خدمة ${category.name} رقم ${i + 1}',
+          nameEn: '${category.name} Service ${i + 1}',
+          description:
+              'خدمة مميزة ضمن فئة ${category.name} تلبي احتياجات مناسبتك.',
+          descriptionEn:
+              'Premium ${category.name} service number ${i + 1} crafted for your events.',
+          minDays: 1 + (i % 3),
+          price: 150 + (i * 35),
+          category: category.name,
+          categoryEn: category.name,
+          brandName: '${category.name} Experts ${i + 1}',
+          brandEmail: '${category.id.replaceAll('_', '.')}.$i@yamaa.app',
+          brandImage: category.image,
+        );
+
+        final data = service.toMap()
+          ..['catId'] = category.id
+          ..['createdAt'] = FieldValue.serverTimestamp();
+
+        await docRef.set(data, SetOptions(merge: true));
+      }
+    }
+
+    debugPrint('services seeding complete');
+  }
+
+  Future<void> seedTestBrands({bool overwrite = false}) async {
+    if (catServices.isEmpty) {
+      await fetchCatServices();
+    }
+
+    for (final category in catServices) {
+      for (var i = 0; i < 3; i++) {
+        final brandId = '${category.id}_brand_${i + 1}';
+        final docRef = _firestore.collection('brands').doc(brandId);
+
+        if (!overwrite) {
+          final exists = await docRef.get();
+          if (exists.exists) {
+            continue;
+          }
+        }
+
+        final brand = Brand(
+          id: brandId,
+          name: '${category.name} Creators ${i + 1}',
+          image: category.image,
+          description:
+              'علامة تقدم حلول ${category.name} مع فريق متخصص وخبرة واسعة.',
+          descriptionEn:
+              '${category.name} specialists delivering tailored experiences.',
+          category: category.name,
+          categoryEn: category.name,
+        );
+
+        final data = brand.toMap()
+          ..['catId'] = category.id
+          ..['createdAt'] = FieldValue.serverTimestamp();
+
+        await docRef.set(data, SetOptions(merge: true));
+      }
+    }
+
+    debugPrint('brands seeding complete');
+  }
+}
