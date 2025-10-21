@@ -13,6 +13,7 @@ class Service {
   final String brandName;
   final String brandEmail;
   final String brandImage;
+  final String image;
 
   const Service({
     required this.id,
@@ -27,6 +28,7 @@ class Service {
     required this.brandName,
     required this.brandEmail,
     required this.brandImage,
+    required this.image,
   });
 
   Map<String, dynamic> toMap() {
@@ -43,6 +45,7 @@ class Service {
       'brandName': brandName,
       'brandEmail': brandEmail,
       'brandImage': brandImage,
+      'image': image,
     };
   }
 
@@ -61,6 +64,7 @@ class Service {
       brandName: map['brandName'] as String? ?? '',
       brandEmail: map['brandEmail'] as String? ?? '',
       brandImage: map['brandImage'] as String? ?? '',
+      image: map['image'] as String? ?? '',
     );
   }
 

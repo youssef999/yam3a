@@ -15,23 +15,28 @@ class LoginHeader extends StatelessWidget {
     return Column(
       children: [
         // App Logo
-        Center(
-          child: Container(
-            height: 80,
-            width: 80,
-            decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Image.asset(
-                appLogo, // Use constant from app_images.dart
-                height: 60,
-                width: 60,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
+        // Center(
+        //   child: Container(
+        //     height: 80,
+        //     width: 80,
+        //     decoration: BoxDecoration(
+        //       color: primaryColor.withOpacity(0.1),
+        //       shape: BoxShape.circle,
+        //     ),
+        //     child: Center(
+        //       child: Image.asset(
+        //         appLogo, // Use constant from app_images.dart
+        //         height: 60,
+        //         width: 60,
+        //         fit: BoxFit.contain,
+        //       ),
+        //     ),
+        //   ),
+        // ),
+
+        CircleAvatar(
+          radius: 70,
+          backgroundImage:  AssetImage(appLogo),
         ),
         
         const SizedBox(height: 30),

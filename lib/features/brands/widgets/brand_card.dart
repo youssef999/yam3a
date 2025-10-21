@@ -4,7 +4,6 @@ import 'package:shop_app/core/models/brand.dart';
 import 'package:shop_app/core/res/app_colors.dart';
 import 'package:shop_app/features/brand_details/brand_details.dart';
 
-
 class BrandCard extends StatelessWidget {
 	final Brand brand;
 
@@ -39,7 +38,7 @@ class BrandCard extends StatelessWidget {
 								crossAxisAlignment: CrossAxisAlignment.start,
 								children: [
 									Text(
-										brand.name,
+										Get.locale?.languageCode == 'ar' ? brand.nameAr : brand.name,
 										style: const TextStyle(
 											fontSize: 17,
 											fontWeight: FontWeight.w700,
@@ -47,7 +46,7 @@ class BrandCard extends StatelessWidget {
 									),
 									const SizedBox(height: 6),
 									Text(
-										brand.description,
+										Get.locale?.languageCode == 'ar' ? brand.description : brand.descriptionEn,
 										maxLines: 3,
 										overflow: TextOverflow.ellipsis,
 										style: const TextStyle(
@@ -61,8 +60,7 @@ class BrandCard extends StatelessWidget {
 										spacing: 8,
 										runSpacing: 6,
 										children: [
-											_PillTag(text: brand.category),
-											_PillTag(text: brand.categoryEn),
+											_PillTag(text: Get.locale?.languageCode == 'ar' ? brand.category : brand.categoryEn),
 										],
 									),
 								],

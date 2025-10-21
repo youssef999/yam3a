@@ -1,5 +1,6 @@
 const String imagePath = "assets/images";
-String appLogo ='$imagePath/logo.png';
+String appLogo ='$imagePath/yamaLogo2.png';
+String appLogoWhite ='$imagePath/yamaLogo1.png';
 String googleImage="$imagePath/google.webp";
 String appleImage="$imagePath/apple.webp";
 String emptyCartImage = '$imagePath/empty_cart.png';

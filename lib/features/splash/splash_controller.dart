@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:get/get.dart';
+import 'package:shop_app/core/utils/local_db.dart';
 import 'package:shop_app/features/login/login_view.dart';
+import 'package:shop_app/features/main_nav_bar/main_nav_bar.dart';
 
 /// Controller for the splash screen with navigation logic
 class SplashController extends GetxController {
@@ -45,8 +47,18 @@ class SplashController extends GetxController {
   void _navigateToNextScreen() {
     print('Splash logic done');
     
-    // Navigate to the login screen after splash
-    Get.off(() => const LoginView());
+    // Check if user email exists in local storage
+    final userEmail = storage.userEmail;
+    
+    if (userEmail != null && userEmail.isNotEmpty) {
+      // User is logged in, navigate to main navigation bar
+      print('User email found: $userEmail - Navigating to main nav bar');
+      Get.off(() => const AppBottomBar());
+    } else {
+      // User not logged in, navigate to login screen
+      print('No user email found - Navigating to login');
+      Get.off(() => const LoginView());
+    }
   }
 
   @override

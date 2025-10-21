@@ -94,8 +94,10 @@ class CustomTextLarge extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+      style: TextStyle(
+      //Theme.of(context).textTheme.bodyLarge?.copyWith(
         color: color ?? txtColor,
+        fontSize: 21,
         fontFamily: 'fs_albert',
         fontWeight: fontWeight,
       ),

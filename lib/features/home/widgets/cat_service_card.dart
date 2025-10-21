@@ -37,7 +37,8 @@ Widget catServiceCard({
 
     return InkWell(
       onTap: () {
-        Get.to(BrandsView(category: catService.name,));
+        final categoryName = Get.locale?.languageCode == 'ar' ? catService.nameAr : catService.name;
+        Get.to(BrandsView(category: catService));
       },
       borderRadius: BorderRadius.circular(16),
       child: Container(
@@ -92,7 +93,7 @@ Widget catServiceCard({
                     ),
                     const SizedBox(height: 12),
                     Text(
-                     catService.name,
+                      Get.locale?.languageCode == 'ar' ? catService.nameAr : catService.name,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

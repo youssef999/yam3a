@@ -1,11 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/widgets/custom_appbar.dart';
 import 'package:shop_app/features/brands/brands_controller.dart';
 import 'package:shop_app/features/brands/widgets/brand_card.dart';
+import 'package:shop_app/features/home/models/cat_service.dart';
 
 class BrandsView extends StatefulWidget {
-	final String category;
+	final CatService category;
 
 	const BrandsView({super.key, required this.category});
 
@@ -33,7 +35,11 @@ class _BrandsViewState extends State<BrandsView> {
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-			appBar: CustomAppBar(widget.category, true),
+      //appbar
+			appBar: CustomAppBar(
+        Get.locale?.languageCode == 'ar' ? widget.category.nameAr : widget.category.name, 
+        true
+      ),
       
      
 			body: GetBuilder<BrandsController>(

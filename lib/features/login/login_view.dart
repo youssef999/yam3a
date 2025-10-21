@@ -17,6 +17,10 @@ class LoginView extends GetView<LoginController> {
     
     return Scaffold(
       backgroundColor: backgroundColor,
+      appBar:AppBar(
+        backgroundColor:primaryColor,
+        toolbarHeight: 3,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

@@ -19,7 +19,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     if (!Get.isRegistered<HomeController>()) {
-      Get.put(HomeController());
+      Get.put(HomeController()); 
     }
     super.initState();
   }

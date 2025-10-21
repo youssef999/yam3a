@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/models/brand.dart';
+import 'package:shop_app/features/home/models/cat_service.dart';
 
 class BrandsController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -9,7 +10,7 @@ class BrandsController extends GetxController {
   final List<Brand> brands = [];
   bool isLoading = false;
   String? errorMessage;
-  late final String category;
+  late final CatService category;
 
   BrandsController({required this.category});
 
@@ -26,7 +27,7 @@ class BrandsController extends GetxController {
 
       final snapshot = await _firestore
           .collection('brands')
-          .where('cat', isEqualTo: category)
+          .where('cat', isEqualTo: category.name)
           //.orderBy('name')
           .get();
 

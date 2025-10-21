@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class CustomTextFormField extends StatefulWidget {
@@ -49,7 +50,7 @@ class CustomTextFormField extends StatefulWidget {
     return CustomTextFormField(
       key: key,
       hint: hint,
-      label: label ?? 'Email',
+      label: label ?? 'Email'.tr,
       prefixIcon: Icons.email_outlined,
       controller: controller,
       validator: validator ?? _defaultEmailValidator,
@@ -75,7 +76,7 @@ class CustomTextFormField extends StatefulWidget {
     return CustomTextFormField(
       key: key,
       hint: hint,
-      label: label ?? 'Password',
+      label: label ?? 'Password'.tr,
       prefixIcon: Icons.lock_outline,
       controller: controller,
       validator: validator ?? _defaultPasswordValidator,
@@ -101,7 +102,7 @@ class CustomTextFormField extends StatefulWidget {
     return CustomTextFormField(
       key: key,
       hint: hint,
-      label: label ?? 'Phone',
+      label: label ?? 'Phone'.tr,
       prefixIcon: Icons.phone_outlined,
       controller: controller,
       validator: validator ?? _defaultPhoneValidator,
@@ -127,7 +128,7 @@ class CustomTextFormField extends StatefulWidget {
     return CustomTextFormField(
       key: key,
       hint: hint,
-      label: label ?? 'Name',
+      label: label ?? 'Name'.tr,
       prefixIcon: Icons.person_outline,
       controller: controller,
       validator: validator ?? _defaultNameValidator,

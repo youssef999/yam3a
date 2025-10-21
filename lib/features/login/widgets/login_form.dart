@@ -28,7 +28,7 @@ class LoginForm extends StatelessWidget {
                   
                     // Email field
                   CustomTextFormField.email(
-                    hint: 'email'.tr,
+                    hint: 'Email'.tr,
                     controller: controller.emailController,
                     color: primaryColor,
                     validator: (value) {
@@ -44,7 +44,7 @@ class LoginForm extends StatelessWidget {
                   
                   // Password field
                   CustomTextFormField.password(
-                    hint: 'password'.tr,
+                    hint: 'Password'.tr,
                     controller: controller.passwordController,
                     color: primaryColor,
                     validator: (value) {

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Brand {
   final String id;
   final String name;
+  final String nameAr;
   final String image;
   final String description;
   final String descriptionEn;
@@ -12,6 +13,7 @@ class Brand {
   const Brand({
     required this.id,
     required this.name,
+    required this.nameAr,
     required this.image,
     required this.description,
     required this.descriptionEn,
@@ -23,6 +25,7 @@ class Brand {
     return {
       'id': id,
       'name': name,
+      'nameAr': nameAr,
       'image': image,
       'des': description,
       'desEn': descriptionEn,
@@ -36,6 +39,7 @@ class Brand {
     return Brand(
       id: map['id'] as String? ?? id,
       name: map['name'] as String? ?? '',
+      nameAr: map['nameAr'] as String? ?? '',
       image: map['image'] as String? ?? '',
       description: map['des'] as String? ?? '',
       descriptionEn: map['desEn'] as String? ?? '',

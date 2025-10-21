@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/res/app_colors.dart';
 import 'package:shop_app/features/home/home_view.dart';
+import 'package:shop_app/features/orders/orders_view.dart';
+import 'package:shop_app/features/profile/profile_view.dart';
 
 
 class ServiceBottomBarController extends GetxController {
@@ -43,9 +45,9 @@ class AppBottomBar extends StatelessWidget {
               // Favorites Tab - Favorites View
               HomeView(),
 
-              HomeView(),
+              OrdersView(),
 
-               HomeView(),
+              ProfileView(),
               
              
             ],

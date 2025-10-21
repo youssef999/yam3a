@@ -26,7 +26,10 @@ class HomeController extends GetxController {
     _initializeHomeData();
   }
 
-  Future<void> _initializeHomeData() async {
+
+/*************  ✨ Windsurf Command ⭐  *************/
+  /// Initialize home data by fetching all categories from Firestore.
+/*******  91ac3aa0-0650-4e13-b272-009f6d4cb9a2  *******/  Future<void> _initializeHomeData() async {
     await fetchCatServices();
   }
 
@@ -114,6 +117,7 @@ class HomeController extends GetxController {
 
         final service = Service(
           id: serviceId,
+          image:'',
           name: 'خدمة ${category.name} رقم ${i + 1}',
           nameEn: '${category.name} Service ${i + 1}',
           description:
@@ -160,6 +164,7 @@ class HomeController extends GetxController {
         final brand = Brand(
           id: brandId,
           name: '${category.name} Creators ${i + 1}',
+          nameAr: 'مبدعو ${category.nameAr} ${i + 1}',
           image: category.image,
           description:
               'علامة تقدم حلول ${category.name} مع فريق متخصص وخبرة واسعة.',
@@ -178,5 +183,42 @@ class HomeController extends GetxController {
     }
 
     debugPrint('brands seeding complete');
+  }
+
+  Future<void> updateBrandsWithNameAr() async {
+    try {
+      debugPrint('Starting to update brands with nameAr...');
+      
+      final snapshot = await _firestore.collection('brands').get();
+      
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final brandName = data['name'] as String? ?? '';
+        
+        // Generate Arabic name based on existing name
+        String nameAr = '';
+        if (brandName.contains('Creators')) {
+          nameAr = brandName.replaceAll('Creators', 'مبدعو');
+        } else if (brandName.contains('Experts')) {
+          nameAr = brandName.replaceAll('Experts', 'خبراء');
+        } else {
+          nameAr = 'علامة $brandName';
+        }
+        
+        // Update the document with nameAr field
+        await doc.reference.update({
+          'nameAr': nameAr,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+        
+        debugPrint('Updated brand ${doc.id} with nameAr: $nameAr');
+      }
+      
+      debugPrint('Successfully updated ${snapshot.docs.length} brands with nameAr');
+      
+    } catch (e, stackTrace) {
+      debugPrint('Failed to update brands with nameAr: $e');
+      debugPrint(stackTrace.toString());
+    }
   }
 }
