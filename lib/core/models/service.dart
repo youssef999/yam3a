@@ -14,6 +14,7 @@ class Service {
   final String brandEmail;
   final String brandImage;
   final String image;
+  final List<String> availableDays;
 
   const Service({
     required this.id,
@@ -29,6 +30,7 @@ class Service {
     required this.brandEmail,
     required this.brandImage,
     required this.image,
+    this.availableDays = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -46,6 +48,7 @@ class Service {
       'brandEmail': brandEmail,
       'brandImage': brandImage,
       'image': image,
+      'availableDays': availableDays,
     };
   }
 
@@ -65,6 +68,7 @@ class Service {
       brandEmail: map['brandEmail'] as String? ?? '',
       brandImage: map['brandImage'] as String? ?? '',
       image: map['image'] as String? ?? '',
+      availableDays: List<String>.from(map['availableDays'] as List<dynamic>? ?? []),
     );
   }
 

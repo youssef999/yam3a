@@ -1,4 +1,4 @@
-# smart_dark_shop
+# yamma_app
 
 A new Flutter project.
 

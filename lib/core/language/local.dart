@@ -453,6 +453,21 @@ class MyLocal implements Translations {
       'city_al_markh': 'المرخ',
       'city_sanad': 'سند',
       
+      // Map View translations
+      'select_location': 'حدد موقعك',
+      'tap_or_drag_map': 'اضغط أو اسحب على الخريطة',
+      'current_selection': 'الموقع المختار حالياً',
+      'latitude': 'خط العرض',
+      'longitude': 'خط الطول',
+      'no_location_selected': 'لم يتم اختيار موقع',
+      'location_updated_successfully': 'تم تحديث الموقع بنجاح',
+      'location_permission_denied': 'تم رفض إذن الموقع',
+      'location_permission_denied_forever': 'تم رفض إذن الموقع بشكل دائم',
+      'location_services_disabled': 'خدمات الموقع معطلة',
+      'location_error': 'حدث خطأ في الحصول على الموقع',
+      'confirm_location': 'تأكيد الموقع',
+      'cancel': 'إلغاء',
+
       // New location messages
       'your_location_detected_success': 'تم اكتشاف موقعك بنجاح',
       'please_detect_location_first': 'يرجى اكتشاف الموقع أولاً',
@@ -1212,6 +1227,17 @@ class MyLocal implements Translations {
       'loading_brands': 'جاري تحميل العلامات التجارية',
       'failed_to_load_brands': 'فشل في تحميل العلامات التجارية',
 
+      // Days of week translations
+      'day_sunday': 'الأحد',
+      'day_monday': 'الاثنين',
+      'day_tuesday': 'الثلاثاء',
+      'day_wednesday': 'الأربعاء',
+      'day_thursday': 'الخميس',
+      'day_friday': 'الجمعة',
+      'day_saturday': 'السبت',
+      'available_days': 'الأيام المتاحة',
+      'no_days_specified': 'لم يتم تحديد أيام',
+
     },
     'en': {
       "another_location":"Use another location",
@@ -1396,6 +1422,21 @@ class MyLocal implements Translations {
       'city_al_markh': 'Al-Markh',
       'city_sanad': 'Sanad',
       
+      // Map View translations
+      'select_location': 'Select Your Location',
+      'tap_or_drag_map': 'Tap or drag on the map',
+      'current_selection': 'Current Selection',
+      'latitude': 'Latitude',
+      'longitude': 'Longitude',
+      'no_location_selected': 'No location selected',
+      'location_updated_successfully': 'Location updated successfully',
+      'location_permission_denied': 'Location permission denied',
+      'location_permission_denied_forever': 'Location permission denied permanently',
+      'location_services_disabled': 'Location services disabled',
+      'location_error': 'Error getting location',
+      'confirm_location': 'Confirm Location',
+      'cancel': 'Cancel',
+
       // New location messages
       'your_location_detected_success': 'Your location detected successfully',
       'please_detect_location_first': 'Please detect location first',
@@ -2378,6 +2419,17 @@ class MyLocal implements Translations {
       'products_in_category': 'Products in Category',
       'change_category': 'Change Category',
       
+      // Days of week translations
+      'day_sunday': 'Sunday',
+      'day_monday': 'Monday',
+      'day_tuesday': 'Tuesday',
+      'day_wednesday': 'Wednesday',
+      'day_thursday': 'Thursday',
+      'day_friday': 'Friday',
+      'day_saturday': 'Saturday',
+      'available_days': 'Available Days',
+      'no_days_specified': 'No days specified',
+
       // App message strings
       'network_error': 'Network error. Please check your connection.',
       'authentication_error': 'Authentication error: ',

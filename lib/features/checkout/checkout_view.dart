@@ -4,7 +4,7 @@ import 'package:shop_app/core/res/app_colors.dart';
 import 'package:shop_app/core/widgets/Custom_button.dart';
 import 'package:shop_app/core/widgets/custom_appbar.dart';
 import 'package:shop_app/features/checkout/checkout_controller.dart';
-import 'package:shop_app/features/location/location_navigator.dart';
+import 'package:shop_app/features/location/service/location_navigator.dart';
 
 class CheckoutView extends StatefulWidget {
   const CheckoutView({super.key});
