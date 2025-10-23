@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/models/brand.dart';
 import 'package:shop_app/core/models/service.dart';
@@ -20,78 +21,54 @@ class BrandDetailsController extends GetxController {
 	bool isLoading = false;
 	bool isLoadingPackages = false;
 	String? errorMessage;
+	DateTime? selectedReceiveDate;
 
 	@override
 	void onInit() {
 		super.onInit();
 		fetchServices();
 		fetchPackages();
-		updateAllServicesWithAvailableDays(availableDays: ['day_sunday',
-		'day_monday','day_wednesday',
-		]);
+		fetchMinPriceFromFireStore();
 	}
 
-	static Future<void> updateAllServicesWithAvailableDays({
-		required List<String> availableDays,
-	}) async {
-		try {
-		 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-			print('🔄 Starting to update all services with availableDays...');
-			print('📅 Available days: $availableDays');
-			final servicesCollection = _firestore.collection('packages');
-			final snapshot = await servicesCollection.get();
-			if (snapshot.docs.isEmpty) {
-				print('⚠️ No services found in collection');
-				return;
-			}
-			print('📊 Found ${snapshot.docs.length} services to update');
-			// Batch write for better performance
-			WriteBatch batch = _firestore.batch();
-			int batchCount = 0;
-
-			for (var doc in snapshot.docs) {
-				batch.update(doc.reference, {
-					'availableDays': availableDays,
-				});
-				batchCount++;
-
-				// Commit batch every 500 operations
-				if (batchCount % 500 == 0) {
-					await batch.commit();
-					print('✅ Committed batch of $batchCount updates');
-					batch = _firestore.batch();
-					batchCount = 0;
-				}
-			}
-
-			// Commit remaining updates
-			if (batchCount > 0) {
-				await batch.commit();
-				print('✅ Committed final batch of $batchCount updates');
-			}
-
-			print('🎉 Successfully updated all services!');
-			print('✨ All services now have availableDays: $availableDays');
-
-			Get.snackbar(
-				'Success',
-				'All services updated with available days!',
-				snackPosition: SnackPosition.BOTTOM,
-				duration: const Duration(seconds: 2),
-			);
-		} catch (e) {
-			print('❌ Error updating services: $e');
-			Get.snackbar(
-				'Error',
-				'Failed to update services: $e',
-				snackPosition: SnackPosition.BOTTOM,
-				isDismissible: true,
-			);
-		}
-	}
+  num minValueForOrderPercetage=0;
 
 
+  fetchMinPriceFromFireStore() async {
+    try {
+      final snapshot = await _firestore
+          .collection('minPrice')
+          .doc('qhxZDYbnbBwevwZ7Waku')
+          .get();
+      
+      if (snapshot.exists && snapshot.data() != null) {
+        final data = snapshot.data()!;
+        minValueForOrderPercetage = data['price'] ?? 0;
+      } else {
+        minValueForOrderPercetage = 0;
+      }
+      
+      update();
+    } catch (e, stackTrace) {
+      debugPrint('Failed to fetch min price: $e');
+      debugPrint(stackTrace.toString());
+      minValueForOrderPercetage = 0;
+    }
+    print('minValueForOrderPercetage: $minValueForOrderPercetage');
+  }
 
+  num totalPriceWithMinValue=0;
+
+  getOrderMinTotal(num totalOrder) {
+    if (minValueForOrderPercetage > 0 && totalOrder < minValueForOrderPercetage) {
+      totalPriceWithMinValue = totalOrder *(minValueForOrderPercetage / 100);
+      //minValueForOrderPercetage;
+    } else {
+      totalPriceWithMinValue = totalOrder *(minValueForOrderPercetage / 100);
+     // totalPriceWithMinValue = totalOrder;
+    }
+    return totalPriceWithMinValue;
+  }
 
 
 	Future<void> fetchServices() async {
@@ -216,7 +193,54 @@ class BrandDetailsController extends GetxController {
 		return selectedPackages.length;
 	}
 
+	// Date picker functionality
+	Future<bool> selectReceiveDate() async {
+		final now = DateTime.now();
+		final firstDate = now.add(const Duration(days: 1)); // Can't select today or past dates
+		final lastDate = now.add(const Duration(days: 365)); // Up to 1 year in future
+		
+		final pickedDate = await showDatePicker(
+			context: Get.context!,
+			initialDate: firstDate,
+			firstDate: firstDate,
+			lastDate: lastDate,
+			builder: (context, child) {
+				return Theme(
+					data: Theme.of(context).copyWith(
+						colorScheme: ColorScheme.light(
+							primary: const Color(0xffE28743),
+							onPrimary: Colors.white,
+							onSurface: Colors.black,
+						),
+					),
+					child: child!,
+				);
+			},
+		);
+		
+		if (pickedDate != null) {
+			selectedReceiveDate = pickedDate;
+			update();
+			return true;
+		}
+		
+		return false;
+	}
 
+	String get formattedReceiveDate {
+		if (selectedReceiveDate == null) return 'not_selected'.tr;
+		
+		final day = selectedReceiveDate!.day.toString().padLeft(2, '0');
+		final month = selectedReceiveDate!.month.toString().padLeft(2, '0');
+		final year = selectedReceiveDate!.year;
+		
+		return '$day/$month/$year';
+	}
+
+	void clearReceiveDate() {
+		selectedReceiveDate = null;
+		update();
+	}
 
 
 }

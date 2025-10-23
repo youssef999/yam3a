@@ -7,6 +7,7 @@ import 'package:shop_app/features/orders/widgets/order_empty_state.dart';
 import 'package:shop_app/features/orders/widgets/order_card.dart';
 import 'package:shop_app/features/orders/widgets/order_loading_widget.dart';
 import 'package:shop_app/features/orders/widgets/order_error_widget.dart';
+import 'package:shop_app/core/widgets/floating_yamaa_button.dart';
 
 class OrdersView extends StatelessWidget {
   const OrdersView({super.key});
@@ -28,6 +29,7 @@ class OrdersView extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton: const SimpleFloatingYamaaButton(),
       body: GetBuilder<OrdersController>(
         builder: (controller) {
           if (controller.isLoading) {

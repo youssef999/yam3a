@@ -9,6 +9,8 @@ class Brand {
   final String descriptionEn;
   final String category;
   final String categoryEn;
+  final double rating;
+  final int reviewCount;
 
   const Brand({
     required this.id,
@@ -19,6 +21,8 @@ class Brand {
     required this.descriptionEn,
     required this.category,
     required this.categoryEn,
+    this.rating = 0.0,
+    this.reviewCount = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -31,6 +35,8 @@ class Brand {
       'desEn': descriptionEn,
       'cat': category,
       'catEn': categoryEn,
+      'rating': rating,
+      'reviewCount': reviewCount,
     };
   }
 
@@ -45,6 +51,8 @@ class Brand {
       descriptionEn: map['desEn'] as String? ?? '',
       category: map['cat'] as String? ?? '',
       categoryEn: map['catEn'] as String? ?? '',
+      rating: (map['rating'] ?? 0.0).toDouble(),
+      reviewCount: (map['reviewCount'] ?? 0).toInt(),
     );
   }
 

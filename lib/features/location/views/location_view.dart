@@ -6,6 +6,7 @@ import 'package:shop_app/core/widgets/custom_appbar.dart';
 import 'package:shop_app/core/widgets/custom_textformfield.dart';
 import 'package:shop_app/features/location/controllers/location_controller.dart';
 import 'package:shop_app/features/location/views/map_view.dart';
+import 'package:shop_app/features/main_nav_bar/main_nav_bar.dart';
 
 class LocationView extends StatefulWidget {
   const LocationView({super.key});
@@ -34,51 +35,57 @@ class _LocationViewState extends State<LocationView> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: CustomAppBar('location'.tr, true),
-      body: GetBuilder<LocationController>(
-        builder: (controller) {
-          if (controller.isLoadingSavedLocation) {
-            return Center(child: CircularProgressIndicator(color: buttonColor));
-          }
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (controller.hasExistingLocation) _buildExistingLocationCard(controller),
-                  _buildSectionHeader(icon: Icons.location_on, title: 'location_details'.tr),
-                  const SizedBox(height: 20),
-                  _buildCityDropdown(controller),
-                  const SizedBox(height: 16),
-                  _buildMapButton(controller),
-                  if (controller.latitude != null && controller.longitude != null)
-                    _buildLocationSuccessMessage(),
-                  const SizedBox(height: 24),
-                  _buildSectionHeader(icon: Icons.home, title: 'address_details'.tr),
-                  const SizedBox(height: 16),
-                  CustomTextFormField(hint: 'enter_area'.tr, label: 'area_district'.tr, prefixIcon: Icons.location_city, controller: controller.areaController, obs: false, color: buttonColor),
-                  CustomTextFormField(hint: 'enter_floor'.tr, label: 'floor'.tr, prefixIcon: Icons.layers, controller: controller.floorController, obs: false, color: buttonColor, type: TextInputType.number),
-                  CustomTextFormField(hint: 'enter_apartment'.tr, label: 'apartment_number'.tr, prefixIcon: Icons.door_front_door, controller: controller.apartmentController, obs: false, color: buttonColor, type: TextInputType.number),
-                  const SizedBox(height: 24),
-                  _buildSectionHeader(icon: Icons.contact_phone, title: 'contact_notes'.tr),
-                  const SizedBox(height: 16),
-                  CustomTextFormField.phone(hint: 'enter_phone'.tr, label: 'phone'.tr, controller: controller.phoneController, color: buttonColor),
-                  CustomTextFormField(hint: 'enter_notes'.tr, label: 'additional_notes'.tr, prefixIcon: Icons.note, controller: controller.notesController, obs: false, color: buttonColor, max: 3),
-                  const SizedBox(height: 32),
-                  Center(
-                    child: controller.isLoading
-                        ? CircularProgressIndicator(color: buttonColor)
-                        : CustomButton(text: 'save_location'.tr.toUpperCase(), width: double.infinity, onPressed: () async {
-                            final success = await controller.saveLocation();
-                            if (success) Get.back();
-                          }),
+      body: Stack(
+        children: [
+          GetBuilder<LocationController>(
+            builder: (controller) {
+              if (controller.isLoadingSavedLocation) {
+                return Center(child: CircularProgressIndicator(color: buttonColor));
+              }
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (controller.hasExistingLocation) _buildExistingLocationCard(controller),
+                      _buildSectionHeader(icon: Icons.location_on, title: 'location_details'.tr),
+                      const SizedBox(height: 20),
+                      _buildCityDropdown(controller),
+                      const SizedBox(height: 16),
+                      _buildMapButton(controller),
+                      if (controller.latitude != null && controller.longitude != null)
+                        _buildLocationSuccessMessage(),
+                      const SizedBox(height: 24),
+                      _buildSectionHeader(icon: Icons.home, title: 'address_details'.tr),
+                      const SizedBox(height: 16),
+                      CustomTextFormField(hint: 'enter_area'.tr, label: 'area_district'.tr, prefixIcon: Icons.location_city, controller: controller.areaController, obs: false, color: buttonColor),
+                      CustomTextFormField(hint: 'enter_floor'.tr, label: 'floor'.tr, prefixIcon: Icons.layers, controller: controller.floorController, obs: false, color: buttonColor, type: TextInputType.number),
+                      CustomTextFormField(hint: 'enter_apartment'.tr, label: 'apartment_number'.tr, prefixIcon: Icons.door_front_door, controller: controller.apartmentController, obs: false, color: buttonColor, type: TextInputType.number),
+                      const SizedBox(height: 24),
+                      _buildSectionHeader(icon: Icons.contact_phone, title: 'contact_notes'.tr),
+                      const SizedBox(height: 16),
+                      CustomTextFormField.phone(hint: 'enter_phone'.tr, label: 'phone'.tr, controller: controller.phoneController, color: buttonColor),
+                      CustomTextFormField(hint: 'enter_notes'.tr, label: 'additional_notes'.tr, prefixIcon: Icons.note, controller: controller.notesController, obs: false, color: buttonColor, max: 3),
+                      const SizedBox(height: 32),
+                      Center(
+                        child: controller.isLoading
+                            ? CircularProgressIndicator(color: buttonColor)
+                            : CustomButton(text: 'save_location'.tr.toUpperCase(), width: double.infinity, onPressed: () async {
+                                final success = await controller.saveLocation();
+                                if (success) Get.back();
+                              }),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                ],
-              ),
-            ),
-          );
-        },
+                ),
+              );
+            },
+          ),
+          // Floating YAMAA Button
+          _FloatingYamaaButton(),
+        ],
       ),
     );
   }
@@ -117,5 +124,64 @@ class _LocationViewState extends State<LocationView> {
 
   Widget _buildLocationSuccessMessage() {
     return Container(margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.green.shade200)), child: Row(children: [Icon(Icons.check_circle_rounded, color: Colors.green.shade700, size: 24), const SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('location_detected_successfully'.tr, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.green.shade800)), const SizedBox(height: 4), Text('location_saved_in_background'.tr, style: TextStyle(fontSize: 12, color: Colors.green.shade700))]))]));
+  }
+}
+
+// Floating YAMAA Button Widget
+class _FloatingYamaaButton extends StatelessWidget {
+  const _FloatingYamaaButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final Color resolvedButtonColor =
+        buttonColor is Color ? buttonColor as Color : const Color(0xFFE47B39);
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+    
+    return Positioned(
+      bottom: 30,
+      left: isArabic ? 20 : null,
+      right: isArabic ? null : 20,
+      child: InkWell(
+        onTap: () {
+          Get.offAll(() => const AppBottomBar());
+        },
+        borderRadius: BorderRadius.circular(35),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
+          height: 65,
+          width: 65,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: resolvedButtonColor.withOpacity(0.4),
+                blurRadius: 25,
+                offset: const Offset(0, 10),
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+            border: Border.all(
+              color: resolvedButtonColor.withOpacity(0.6),
+              width: 3,
+            ),
+          ),
+          child: ClipOval(
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              child: Image.asset(
+                'assets/images/yamaLogo1.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

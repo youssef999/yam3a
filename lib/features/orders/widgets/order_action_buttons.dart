@@ -5,8 +5,9 @@ import 'package:shop_app/features/orders/order_model.dart';
 import 'package:shop_app/features/orders/orders_controller.dart';
 import 'package:shop_app/features/orders/order_details_view.dart';
 import 'package:shop_app/features/orders/widgets/order_cancel_dialog.dart';
+import 'package:shop_app/features/review/send_review_view.dart';
 
-class OrderActionButtons extends StatelessWidget {
+class OrderActionButtons extends StatefulWidget {
   final OrderModel order;
   final OrdersController controller;
 
@@ -17,16 +18,60 @@ class OrderActionButtons extends StatelessWidget {
   });
 
   @override
+  State<OrderActionButtons> createState() => _OrderActionButtonsState();
+}
+
+class _OrderActionButtonsState extends State<OrderActionButtons> {
+  bool isLoadingReviewStatus = false;
+  bool? isReviewed;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_canReviewOrder()) {
+      _checkReviewStatus();
+    }
+  }
+
+  Future<void> _checkReviewStatus() async {
+    if (widget.order.id == null) return;
+    
+    setState(() {
+      isLoadingReviewStatus = true;
+    });
+    
+    final reviewed = await widget.controller.isOrderReviewed(widget.order.id!);
+    
+    if (mounted) {
+      setState(() {
+        isReviewed = reviewed;
+        isLoadingReviewStatus = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: _buildViewDetailsButton(),
+        Row(
+          children: [
+            Expanded(
+              child: _buildViewDetailsButton(),
+            ),
+            if (_canCancelOrder()) ...[
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildCancelButton(context),
+              ),
+            ],
+          ],
         ),
-        if (_canCancelOrder()) ...[
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildCancelButton(context),
+        if (_canReviewOrder()) ...[
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: _buildReviewWidget(),
           ),
         ],
       ],
@@ -34,12 +79,17 @@ class OrderActionButtons extends StatelessWidget {
   }
 
   bool _canCancelOrder() {
-    return order.status.toLowerCase() == 'pending';
+    return widget.order.status.toLowerCase() == 'pending';
+  }
+
+  bool _canReviewOrder() {
+    final status = widget.order.status.toLowerCase();
+    return status == 'done' || status == 'completed';
   }
 
   Widget _buildViewDetailsButton() {
     return OutlinedButton(
-      onPressed: () => Get.to(() => OrderDetailsView(order: order)),
+      onPressed: () => Get.to(() => OrderDetailsView(order: widget.order)),
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: primaryColor),
         shape: RoundedRectangleBorder(
@@ -71,11 +121,99 @@ class OrderActionButtons extends StatelessWidget {
     );
   }
 
+  Widget _buildReviewWidget() {
+    if (isLoadingReviewStatus) {
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.grey[400]!),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'checking_review_status'.tr,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (isReviewed == true) {
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.green[50],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.green[200]!),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.check_circle_outline,
+              color: Colors.green[600],
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'review_submitted'.tr,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.green[700],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return _buildReviewButton();
+  }
+
+  Widget _buildReviewButton() {
+    return ElevatedButton.icon(
+      onPressed: () => Get.to(() => SendReviewView(order: widget.order)),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.amber,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        elevation: 4,
+      ),
+      icon: const Icon(Icons.star_border_rounded, size: 20),
+      label: Text(
+        'rate_and_review'.tr,
+        style: const TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
+      ),
+    );
+  }
+
   void _showCancelDialog(BuildContext context) {
     OrderCancelDialog.show(
       context: context,
-      order: order,
-      controller: controller,
+      order: widget.order,
+      controller: widget.controller,
     );
   }
 }

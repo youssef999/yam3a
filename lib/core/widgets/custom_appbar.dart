@@ -25,10 +25,10 @@ PreferredSizeWidget CustomAppBar(
     preferredSize: Size.fromHeight(height),
     child: Container(
       decoration: BoxDecoration(
-        color: backgroundColor ?? appBarColor,
+        color:  appBarColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.white.withValues(alpha: 0.06),
+            color: Colors.purple.withValues(alpha: 0.06),
             blurRadius: 8,
             offset: const Offset(0, 2),
             spreadRadius: 0,
@@ -73,11 +73,11 @@ PreferredSizeWidget CustomAppBar(
                 child: Center(
                   child: Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: const TextStyle(
+                      fontSize: 17,
                       fontWeight: FontWeight.w500,
-                      color: titleColor ?? txtColor,
-                      letterSpacing: 1.2,
+                      color: Colors.white,
+                      letterSpacing: 1.1,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

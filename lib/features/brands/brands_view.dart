@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/widgets/custom_appbar.dart';
+import 'package:shop_app/core/widgets/floating_yamaa_button.dart';
 import 'package:shop_app/features/brands/brands_controller.dart';
 import 'package:shop_app/features/brands/widgets/brand_card.dart';
 import 'package:shop_app/features/home/models/cat_service.dart';
@@ -40,6 +40,11 @@ class _BrandsViewState extends State<BrandsView> {
         Get.locale?.languageCode == 'ar' ? widget.category.nameAr : widget.category.name, 
         true
       ),
+
+      floatingActionButton: const FloatingYamaaButton(
+        size: 65,
+        bottomOffset: 120,
+      ),
       
      
 			body: GetBuilder<BrandsController>(
@@ -73,7 +78,7 @@ class _BrandsViewState extends State<BrandsView> {
 					return RefreshIndicator(
 						onRefresh: () => ctrl.fetchBrands(),
 						child: ListView.separated(
-							padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+							padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
 							itemCount: ctrl.brands.length,
 							separatorBuilder: (_, __) => const SizedBox(height: 12),
 							itemBuilder: (context, index) {
@@ -83,10 +88,12 @@ class _BrandsViewState extends State<BrandsView> {
 						),
 					);
 				},
-			),
+			)
+      //.withFloatingYamaaButton(),
 		);
 	
 }
 
 
 }
+

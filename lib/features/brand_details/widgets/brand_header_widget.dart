@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/models/brand.dart';
 import 'package:shop_app/core/res/app_colors.dart';
+import 'package:shop_app/features/brand_reviews/brand_review.dart';
 
 class BrandHeaderWidget extends StatelessWidget {
   const BrandHeaderWidget({super.key, required this.brand});
@@ -130,24 +131,46 @@ class BrandHeaderWidget extends StatelessWidget {
         Positioned(
           bottom: 16,
           left: 20,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: accentColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.star, color: Colors.white, size: 18),
-                SizedBox(width: 6),
-                Text(
-                  '4.8 (120)',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+          child: GestureDetector(
+            onTap: () {
+              Get.to(() => BrandReviewsView(brand: brand));
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: accentColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                ),
-              ],
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.star, color: Colors.white, size: 18),
+                  const SizedBox(width: 6),
+                  Text(
+                    brand.rating > 0 
+                        ? '${brand.rating.toStringAsFixed(1)} (${brand.reviewCount})'
+                        : 'no_ratings_yet'.tr,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                    size: 12,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

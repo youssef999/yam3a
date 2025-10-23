@@ -12,9 +12,7 @@ import 'package:shop_app/features/brand_details/widgets/tabs_bar_widget.dart';
 import 'package:shop_app/features/brand_details/widgets/service_categories_chips_widget.dart';
 import 'package:shop_app/features/brand_details/widgets/services_list_widget.dart';
 import 'package:shop_app/features/brand_details/widgets/packages_list_widget.dart';
-import 'package:shop_app/features/location/service/location_navigator.dart';
-import 'package:shop_app/features/checkout/checkout_controller.dart';
-import 'package:shop_app/features/checkout/checkout_view.dart';
+import 'package:shop_app/core/widgets/floating_yamaa_button.dart';
 
 class BrandDetailsView extends StatefulWidget {
 	const BrandDetailsView({super.key, required this.brand});
@@ -109,26 +107,32 @@ class _BrandDetailsViewState extends State<BrandDetailsView> {
 																),
 															),
 														),
+														const SliverToBoxAdapter(child: SizedBox(height: 100)), // Space for floating button
 													],
 												);
 											} else {
 												// Packages tab content
-												return SliverToBoxAdapter(
-													child: Padding(
-														padding: const EdgeInsets.symmetric(horizontal: 20),
-														child: controller.isLoadingPackages
-															? const Center(
-																	child: Padding(
-																		padding: EdgeInsets.all(40),
-																		child: CircularProgressIndicator(),
-																	),
-																)
-															: PackagesListWidget(
-																	controller: controller,
-																	packages: controller.packages,
-																	accentColor: const Color(0xffE28743),
-																),
-													),
+												return SliverMainAxisGroup(
+													slivers: [
+														SliverToBoxAdapter(
+															child: Padding(
+																padding: const EdgeInsets.symmetric(horizontal: 20),
+																child: controller.isLoadingPackages
+																	? const Center(
+																			child: Padding(
+																				padding: EdgeInsets.all(40),
+																				child: CircularProgressIndicator(),
+																			),
+																		)
+																	: PackagesListWidget(
+																			controller: controller,
+																			packages: controller.packages,
+																			accentColor: const Color(0xffE28743),
+																		),
+															),
+														),
+														const SliverToBoxAdapter(child: SizedBox(height: 100)), // Space for floating button
+													],
 												);
 											}
 										},
@@ -138,7 +142,7 @@ class _BrandDetailsViewState extends State<BrandDetailsView> {
 						);
 					},
 				),
-			),
+			).withFloatingYamaaButton(bottomOffset: 120, size: 65),
 			bottomNavigationBar: GetBuilder<TabsBarController>(
 				builder: (tabController) => GetBuilder<BrandDetailsController>(
 					tag: widget.brand.id,

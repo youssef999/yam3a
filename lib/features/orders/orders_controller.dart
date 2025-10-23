@@ -190,4 +190,28 @@ class OrdersController extends GetxController {
   Future<void> refreshOrders() async {
     await loadOrders();
   }
+
+  // Check if an order has been reviewed
+  Future<bool> isOrderReviewed(String orderId) async {
+    try {
+      final querySnapshot = await _firestore
+          .collection('reviews')
+          .where('orderId', isEqualTo: orderId)
+          .limit(1)
+          .get();
+      
+      final hasReview = querySnapshot.docs.isNotEmpty;
+      
+      if (kDebugMode) {
+        print('📝 Order $orderId review status: ${hasReview ? "Reviewed" : "Not reviewed"}');
+      }
+      
+      return hasReview;
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error checking review status for order $orderId: $e');
+      }
+      return false; // Default to not reviewed if there's an error
+    }
+  }
 }

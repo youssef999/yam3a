@@ -6,7 +6,8 @@ dynamic primaryColor = const Color(0xff5A1E3D);
 //const Color(0xFF8B4B89); 
 //const Color(0xFFE47B39);         // Orange primary for buttons and accents
 dynamic backgroundColor = Colors.grey[100];      // Purple background like screenshots
-dynamic appBarColor = Colors.white;
+dynamic appBarColor = const Color(0xff5A1E3D);
+//Colors.white;
 //const Color(0xFF8E4EC6);          // Purple app bar
 dynamic appSurfaceColor = const Color(0xff5A1E3D);
 // const Color(0xFF8E4EC6);      // Purple surface color
@@ -15,7 +16,7 @@ dynamic appSurfaceColor = const Color(0xff5A1E3D);
 dynamic txtColor = Colors.grey[900];                        // White text on purple background
 dynamic lightTxtColor = Colors.white70;                 // Light white text
 
-dynamic appBarIconColor = Colors.grey[600];               // Dark icons for white app bar
+dynamic appBarIconColor = Colors.grey[100];               // Dark icons for white app bar
 // Component Colors  
 dynamic buttonColor = const Color(0xffE28743);          // Orange buttons like screenshots
 dynamic cardColor = Colors.white;                       // White cards and surfaces

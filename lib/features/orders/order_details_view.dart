@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shop_app/core/res/app_colors.dart';
 import 'package:shop_app/features/orders/order_model.dart';
+import 'package:shop_app/features/orders/widgets/payment_breakdown_card.dart';
+import 'package:shop_app/core/widgets/floating_yamaa_button.dart';
 
 class OrderDetailsView extends StatelessWidget {
   final OrderModel order;
@@ -18,6 +20,7 @@ class OrderDetailsView extends StatelessWidget {
         backgroundColor: primaryColor,
         elevation: 0,
       ),
+      floatingActionButton: const SimpleFloatingYamaaButton(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,6 +36,10 @@ class OrderDetailsView extends StatelessWidget {
             
             // Delivery Location
             _buildDeliveryLocation(),
+            
+            // Payment Breakdown
+            PaymentBreakdownCard(order: order),
+            const SizedBox(height: 16),
             
             // Price Summary
             _buildPriceSummary(),
@@ -120,6 +127,10 @@ class OrderDetailsView extends StatelessWidget {
           const SizedBox(height: 12),
           _buildInfoRow(Icons.access_time, 'time'.tr, order.getFormattedTime()),
           const SizedBox(height: 12),
+          if (order.receiveDate != null) ...[
+            _buildInfoRow(Icons.schedule, 'receive_date'.tr, order.getFormattedReceiveDate()),
+            const SizedBox(height: 12),
+          ],
           _buildInfoRow(
             order.orderType == 'SERVICE' ? Icons.build : Icons.inventory_2,
             'order_type'.tr,
@@ -399,27 +410,101 @@ class OrderDetailsView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'subtotal'.tr,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.white70,
-                ),
-              ),
-              Text(
-                'BD ${order.totalPrice.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  fontSize: 15,
+          // Payment Status Header
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  order.isFullyPaid 
+                    ? Icons.check_circle 
+                    : order.isPartiallyPaid 
+                      ? Icons.payments 
+                      : Icons.pending_actions,
                   color: Colors.white,
-                  fontWeight: FontWeight.w600,
+                  size: 20,
                 ),
-              ),
-            ],
+                const SizedBox(width: 8),
+                Text(
+                  order.getPaymentStatusText().tr.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
+
+          // Payment Breakdown
+          if (order.paidAmount > 0) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.check_circle, size: 16, color: Colors.white),
+                    const SizedBox(width: 8),
+                    Text(
+                      'paid_amount'.tr,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  'BD ${order.paidAmount.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          if (order.unpaidAmount > 0) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.pending, size: 16, color: Colors.white),
+                    const SizedBox(width: 8),
+                    Text(
+                      'remaining_amount'.tr,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  'BD ${order.unpaidAmount.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -440,6 +525,55 @@ class OrderDetailsView extends StatelessWidget {
               ),
             ],
           ),
+          
+          // Payment Progress Bar (if partially paid)
+          if (order.isPartiallyPaid) ...[
+            const SizedBox(height: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'payment_progress'.tr,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    Text(
+                      '${order.paymentPercentage.toStringAsFixed(1)}%',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child: FractionallySizedBox(
+                    alignment: Alignment.centerLeft,
+                    widthFactor: order.paymentPercentage / 100,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          
           const SizedBox(height: 16),
           Container(
             height: 1,

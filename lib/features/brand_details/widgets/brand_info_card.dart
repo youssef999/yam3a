@@ -38,9 +38,9 @@ class BrandInfoWidget extends StatelessWidget {
 				mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 				children: [
 					_CompactInfoTile(
-						icon: Icons.local_shipping_outlined,
-						label: 'delivery_charges'.tr,
-						value: 'BD0',
+						icon: Icons.money_off_csred_outlined,
+						label: 'depoiste'.tr,
+						value: "${controller.minValueForOrderPercetage}%",
 						accentColor: accent,
 					),
 					_CompactDivider(accent: accent),

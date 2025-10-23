@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/res/app_colors.dart';
+import 'package:shop_app/core/models/brand.dart';
+import '../../../core/widgets/custom_appbar.dart';
+import '../../../core/widgets/floating_yamaa_button.dart';
 import 'package:shop_app/features/search/search_controller.dart';
 import 'package:shop_app/features/brands/widgets/brand_card.dart';
 
@@ -13,21 +16,10 @@ class SearchView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: AppBar(
-        backgroundColor: appBarColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: appBarIconColor),
-          onPressed: () => Get.back(),
-        ),
-        title: Text(
-          'search'.tr,
-          style: TextStyle(
-            color: txtColor,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      appBar: CustomAppBar('search'.tr, true),
+      floatingActionButton: const FloatingYamaaButton(
+        size: 65,
+        bottomOffset: 120,
       ),
       body: Column(
         children: [
@@ -48,7 +40,7 @@ class SearchView extends StatelessWidget {
                 }
 
                 if (!controller.hasSearched || controller.searchQuery.isEmpty) {
-                  return _InitialSearchState();
+                  return _InitialSearchState(allBrands: controller.allBrands);
                 }
 
                 return _SearchResults(controller: controller);
@@ -56,7 +48,8 @@ class SearchView extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )
+      //.withFloatingYamaaButton(),
     );
   }
 }
@@ -186,7 +179,7 @@ class _SearchResults extends StatelessWidget {
         ),
         Expanded(
           child: ListView.separated(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
             itemCount: controller.searchResults.length,
             separatorBuilder: (context, index) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
@@ -271,52 +264,123 @@ class _ResultsHeader extends StatelessWidget {
 
 // Initial Search State
 class _InitialSearchState extends StatelessWidget {
-  const _InitialSearchState();
+  final List<Brand> allBrands;
+
+  const _InitialSearchState({required this.allBrands});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return SingleChildScrollView(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: primaryColor is Color
-                  ? (primaryColor as Color).withOpacity(0.1)
-                  : const Color(0xFF5A1E3D).withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.search_rounded,
-              size: 64,
-              color: primaryColor,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'start_searching'.tr,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: txtColor,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Text(
-              'search_description'.tr,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.grey[600],
-                height: 1.5,
+          if (allBrands.isEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: primaryColor is Color
+                            ? (primaryColor as Color).withOpacity(0.1)
+                            : const Color(0xFF5A1E3D).withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.search_rounded,
+                        size: 64,
+                        color: primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'start_searching'.tr,
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: txtColor,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: Text(
+                        'search_description'.tr,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey[600],
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    _SearchTips(),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 32),
-          _SearchTips(),
+          ] else ...[
+            // Display all brands in grid when no search is active
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.star_rounded,
+                        size: 24,
+                        color: primaryColor,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'all_brands'.tr,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: txtColor,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: primaryColor is Color
+                              ? (primaryColor as Color).withOpacity(0.1)
+                              : const Color(0xFF5A1E3D).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${allBrands.length}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: allBrands.length,
+                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final brand = allBrands[index];
+                      return BrandCard(brand: brand);
+                    },
+                  ),
+                  const SizedBox(height: 100), // Space for floating button
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -420,80 +484,89 @@ class _EmptySearchResults extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.search_off_rounded,
-            size: 80,
-            color: Colors.grey[300],
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'no_results_found'.tr,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: txtColor,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.grey[600],
-                  height: 1.5,
-                ),
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              child: Column(
                 children: [
-                  TextSpan(text: 'no_results_for'.tr),
-                  TextSpan(
-                    text: ' "$query"',
-                    style: const TextStyle(
+                  Icon(
+                    Icons.search_off_rounded,
+                    size: 80,
+                    color: Colors.grey[300],
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'no_results_found'.tr,
+                    style: TextStyle(
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      color: txtColor,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey[600],
+                          height: 1.5,
+                        ),
+                        children: [
+                          TextSpan(text: 'no_results_for'.tr),
+                          TextSpan(
+                            text: ' "$query"',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 32),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.amber[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.amber[200]!,
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: Colors.amber[700],
+                          size: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'try_different_keywords'.tr,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.amber[900],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 32),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 32),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.amber[50],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Colors.amber[200]!,
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  color: Colors.amber[700],
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'try_different_keywords'.tr,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.amber[900],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -574,3 +647,5 @@ class _ErrorWidget extends StatelessWidget {
     );
   }
 }
+
+

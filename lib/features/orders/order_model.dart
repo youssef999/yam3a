@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 
 class OrderModel {
   final String? id;
@@ -7,7 +8,10 @@ class OrderModel {
   final String userName;
   final String orderType;
   final String orderDate;
+  final String? receiveDate;
   final double totalPrice;
+  final double paidAmount;
+  final double unpaidAmount;
   final String status;
   final String paymentMethod;
   final String paymentStatus;
@@ -27,7 +31,10 @@ class OrderModel {
     required this.userName,
     required this.orderType,
     required this.orderDate,
+    this.receiveDate,
     required this.totalPrice,
+    this.paidAmount = 0.0,
+    this.unpaidAmount = 0.0,
     required this.status,
     required this.paymentMethod,
     required this.paymentStatus,
@@ -51,7 +58,10 @@ class OrderModel {
       userName: data['userName'] ?? '',
       orderType: data['orderType'] ?? '',
       orderDate: data['orderDate'] ?? '',
+      receiveDate: data['receiveDate'] as String?,
       totalPrice: (data['totalPrice'] ?? 0).toDouble(),
+      paidAmount: (data['paidAmount'] ?? 0).toDouble(),
+      unpaidAmount: (data['unpaidAmount'] ?? 0).toDouble(),
       status: data['status'] ?? 'pending',
       paymentMethod: data['paymentMethod'] ?? '',
       paymentStatus: data['paymentStatus'] ?? '',
@@ -76,7 +86,10 @@ class OrderModel {
       'userName': userName,
       'orderType': orderType,
       'orderDate': orderDate,
+      'receiveDate': receiveDate,
       'totalPrice': totalPrice,
+      'paidAmount': paidAmount,
+      'unpaidAmount': unpaidAmount,
       'status': status,
       'paymentMethod': paymentMethod,
       'paymentStatus': paymentStatus,
@@ -124,6 +137,31 @@ class OrderModel {
     } catch (e) {
       return '';
     }
+  }
+
+  String getFormattedReceiveDate() {
+    if (receiveDate == null || receiveDate!.isEmpty) return 'not_specified'.tr;
+    try {
+      final date = DateTime.parse(receiveDate!);
+      return '${date.day}/${date.month}/${date.year}';
+    } catch (e) {
+      return receiveDate!;
+    }
+  }
+
+  bool get isFullyPaid => unpaidAmount <= 0;
+  bool get isPartiallyPaid => paidAmount > 0 && unpaidAmount > 0;
+  bool get isNotPaid => paidAmount <= 0;
+
+  double get paymentPercentage {
+    if (totalPrice <= 0) return 0.0;
+    return (paidAmount / totalPrice) * 100;
+  }
+
+  String getPaymentStatusText() {
+    if (isFullyPaid) return 'fully_paid';
+    if (isPartiallyPaid) return 'partially_paid';
+    return 'not_paid';
   }
 }
 

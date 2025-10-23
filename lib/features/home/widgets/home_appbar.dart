@@ -28,9 +28,9 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         //           height: 28,
         //         ),
       ),
-	title: CustomTextLarge( 'YAMMA',
+	title: const CustomTextLarge( 'YAMMA',
       
-       color: primaryColor, fontWeight: FontWeight.w500),
+       color:Colors.white, fontWeight: FontWeight.w500),
 
 
 			actions: [

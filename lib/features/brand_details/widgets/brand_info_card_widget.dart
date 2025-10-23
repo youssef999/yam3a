@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/models/brand.dart';
 import 'package:shop_app/core/res/app_colors.dart';
+import 'package:shop_app/features/brand_reviews/brand_review.dart';
 
 class BrandInfoCard extends StatelessWidget {
 	const BrandInfoCard({super.key, required this.brand});
@@ -10,10 +11,8 @@ class BrandInfoCard extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		
-
 		return Container(
-			padding: const EdgeInsets.only(top:16,left: 20,right:20,bottom:6),
+			padding: const EdgeInsets.only(top:16,left: 20,right:20,bottom:16),
 			decoration: BoxDecoration(
 				color: Colors.white,
 				borderRadius: BorderRadius.circular(24),
@@ -46,7 +45,9 @@ class BrandInfoCard extends StatelessWidget {
 									crossAxisAlignment: CrossAxisAlignment.start,
 									children: [
 										Text(
-											Get.locale?.languageCode == 'ar' ? brand.nameAr : brand.name,
+											Get.locale?.languageCode == 'ar' ? 
+												(brand.nameAr.isEmpty ? brand.name : brand.nameAr) : 
+												brand.name,
 											style: const TextStyle(
 												fontSize: 20,
 												fontWeight: FontWeight.w700,
@@ -56,12 +57,14 @@ class BrandInfoCard extends StatelessWidget {
 										Row(
 											children: [
 												Icon(Icons.location_on_outlined,
-														size: 18, color: iconColor ,
+														size: 18, color: iconColor,
                                 ),
 												const SizedBox(width: 4),
 												Expanded(
 													child: Text(
-														Get.locale?.languageCode == 'ar' ? brand.description : brand.descriptionEn,
+														Get.locale?.languageCode == 'ar' ? 
+															(brand.description.isEmpty ? brand.descriptionEn : brand.description) : 
+															(brand.descriptionEn.isEmpty ? brand.description : brand.descriptionEn),
 														style: const TextStyle(
 															fontSize: 13,
 															color: Colors.black54,
@@ -75,7 +78,100 @@ class BrandInfoCard extends StatelessWidget {
 							),
 						],
 					),
-					const SizedBox(height: 10),
+					const SizedBox(height: 12),
+					
+					// Rating and Reviews Section
+					Row(
+						children: [
+							// Rating display
+							if (brand.rating > 0) ...[
+								Row(
+									children: [
+										Row(
+											children: List.generate(5, (index) {
+												return Icon(
+													index < brand.rating.floor()
+														? Icons.star
+														: index < brand.rating
+															? Icons.star_half
+															: Icons.star_border,
+													color: Colors.amber,
+													size: 16,
+												);
+											}),
+										),
+										const SizedBox(width: 6),
+										Text(
+											brand.rating.toStringAsFixed(1),
+											style: const TextStyle(
+												fontSize: 14,
+												fontWeight: FontWeight.w600,
+												color: Colors.black87,
+											),
+										),
+									],
+								),
+							] else ...[
+								Row(
+									children: [
+										Row(
+											children: List.generate(5, (index) {
+												return Icon(
+													Icons.star_border,
+													color: Colors.grey[400],
+													size: 16,
+												);
+											}),
+										),
+										const SizedBox(width: 6),
+										Text(
+											'no_ratings_yet'.tr,
+											style: TextStyle(
+												fontSize: 12,
+												color: Colors.grey[600],
+											),
+										),
+									],
+								),
+							],
+							
+							const SizedBox(width: 12),
+							
+							// Reviews button
+							GestureDetector(
+								onTap: () => Get.to(() => BrandReviewsView(brand: brand)),
+								child: Container(
+									padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+									decoration: BoxDecoration(
+										color: primaryColor.withOpacity(0.1),
+										borderRadius: BorderRadius.circular(20),
+										border: Border.all(color: primaryColor.withOpacity(0.3)),
+									),
+									child: Row(
+										mainAxisSize: MainAxisSize.min,
+										children: [
+											Icon(
+												Icons.rate_review_outlined,
+												size: 14,
+												color: primaryColor,
+											),
+											const SizedBox(width: 4),
+											Text(
+												brand.reviewCount > 0 
+													? '${brand.reviewCount} ${'reviews'.tr}'
+													: 'view_reviews'.tr,
+												style: TextStyle(
+													fontSize: 12,
+													color: primaryColor,
+													fontWeight: FontWeight.w500,
+												),
+											),
+										],
+									),
+								),
+							),
+						],
+					),
 			
 				],
 			),

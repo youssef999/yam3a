@@ -5,6 +5,7 @@ import 'package:shop_app/core/widgets/Custom_button.dart';
 import 'package:shop_app/core/widgets/custom_appbar.dart';
 import 'package:shop_app/features/location/controllers/previous_location_controller.dart';
 import 'package:shop_app/features/location/views/location_view.dart';
+import 'package:shop_app/features/main_nav_bar/main_nav_bar.dart';
 
 class PreviousLocationView extends StatefulWidget {
   const PreviousLocationView({super.key});
@@ -33,33 +34,39 @@ class _PreviousLocationViewState extends State<PreviousLocationView> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: CustomAppBar('your_saved_location'.tr, true),
-      body: GetBuilder<PreviousLocationController>(
-        builder: (controller) {
-          if (controller.isLoading) {
-            return Center(child: CircularProgressIndicator(color: buttonColor));
-          }
+      body: Stack(
+        children: [
+          GetBuilder<PreviousLocationController>(
+            builder: (controller) {
+              if (controller.isLoading) {
+                return Center(child: CircularProgressIndicator(color: buttonColor));
+              }
 
-          if (controller.locationData == null) {
-            return _buildEmptyState();
-          }
+              if (controller.locationData == null) {
+                return _buildEmptyState();
+              }
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildLocationCard(controller),
-                  const SizedBox(height: 24),
-                  _buildLocationDetails(controller),
-                  const SizedBox(height: 32),
-                  _buildActionButtons(controller),
-                  const SizedBox(height: 20),
-                ],
-              ),
-            ),
-          );
-        },
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLocationCard(controller),
+                      const SizedBox(height: 24),
+                      _buildLocationDetails(controller),
+                      const SizedBox(height: 32),
+                      _buildActionButtons(controller),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          // Floating YAMAA Button
+          _FloatingYamaaButton(),
+        ],
       ),
     );
   }
@@ -67,7 +74,7 @@ class _PreviousLocationViewState extends State<PreviousLocationView> {
   Widget _buildEmptyState() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(40),
+        padding: const EdgeInsets.fromLTRB(40, 40, 40, 120),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -373,6 +380,65 @@ class _PreviousLocationViewState extends State<PreviousLocationView> {
             child: Text('delete'.tr, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// Floating YAMAA Button Widget
+class _FloatingYamaaButton extends StatelessWidget {
+  const _FloatingYamaaButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final Color resolvedButtonColor =
+        buttonColor is Color ? buttonColor as Color : const Color(0xFFE47B39);
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+    
+    return Positioned(
+      bottom: 30,
+      left: isArabic ? 20 : null,
+      right: isArabic ? null : 20,
+      child: InkWell(
+        onTap: () {
+          Get.offAll(() => const AppBottomBar());
+        },
+        borderRadius: BorderRadius.circular(35),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
+          height: 65,
+          width: 65,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: resolvedButtonColor.withOpacity(0.4),
+                blurRadius: 25,
+                offset: const Offset(0, 10),
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+            border: Border.all(
+              color: resolvedButtonColor.withOpacity(0.6),
+              width: 3,
+            ),
+          ),
+          child: ClipOval(
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              child: Image.asset(
+                'assets/images/yamaLogo1.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
