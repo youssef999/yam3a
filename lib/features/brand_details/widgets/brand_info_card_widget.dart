@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/models/brand.dart';
 import 'package:shop_app/core/res/app_colors.dart';
+import 'package:shop_app/core/animations/page_transitions.dart';
 import 'package:shop_app/features/brand_reviews/brand_review.dart';
 
 class BrandInfoCard extends StatelessWidget {
@@ -139,7 +140,7 @@ class BrandInfoCard extends StatelessWidget {
 							
 							// Reviews button
 							GestureDetector(
-								onTap: () => Get.to(() => BrandReviewsView(brand: brand)),
+								onTap: () => AnimatedGet.toWithSlideRight(BrandReviewsView(brand: brand)),
 								child: Container(
 									padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 									decoration: BoxDecoration(

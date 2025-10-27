@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shop_app/core/utils/local_db.dart';
+import 'package:shop_app/core/utils/user_data_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileController extends GetxController {
@@ -37,7 +38,63 @@ class ProfileController extends GetxController {
     userEmail = storage.userEmail ?? '';
     emailController.text = userEmail;
     nameController.text = userName;
+    
+    // If user name is empty or null, fetch it from Firebase
+    if (storage.needsUserNameFetch()) {
+      _ensureUserNameLoaded();
+    }
+    
     update();
+  }
+  
+  Future<void> _ensureUserNameLoaded() async {
+    await UserDataManager.ensureUserNameIsAvailable();
+    // Reload data after fetching
+    userName = storage.userName ?? 'user'.tr;
+    nameController.text = userName;
+    update();
+  }
+  
+  Future<void> fetchUserNameFromFirebase() async {
+    try {
+      final email = storage.userEmail;
+      if (email == null || email.isEmpty) return;
+      
+      final doc = await _firestore.collection('users').doc(email).get();
+      if (doc.exists) {
+        final data = doc.data();
+        final firebaseName = data?['name'] ?? data?['userName'] ?? '';
+        
+        if (firebaseName.isNotEmpty) {
+          // Save the fetched name to local storage
+          await storage.saveUserName(firebaseName);
+          userName = firebaseName;
+          nameController.text = firebaseName;
+          update();
+        }
+      }
+    } catch (e) {
+      print('Error fetching user name from Firebase: $e');
+      // If Firebase fails, you could also try other sources or keep default
+    }
+  }
+  
+  /// Initialize user data - call this when app starts or user logs in
+  Future<void> initializeUserData() async {
+    loadUserData();
+    
+    // Force fetch from Firebase if we don't have complete user data
+    if (!storage.hasCompleteUserData()) {
+      await fetchUserNameFromFirebase();
+    }
+  }
+  
+  /// Static method to ensure user data is available globally
+  static Future<void> ensureUserDataLoaded() async {
+    if (storage.needsUserNameFetch()) {
+      final controller = ProfileController();
+      await controller.fetchUserNameFromFirebase();
+    }
   }
   
   void loadLanguage() {

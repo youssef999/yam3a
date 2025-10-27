@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/res/app_colors.dart';
+import 'package:shop_app/core/animations/page_transitions.dart';
 import 'package:shop_app/features/orders/order_model.dart';
 import 'package:shop_app/features/orders/orders_controller.dart';
 import 'package:shop_app/features/orders/order_details_view.dart';
@@ -89,7 +90,7 @@ class _OrderActionButtonsState extends State<OrderActionButtons> {
 
   Widget _buildViewDetailsButton() {
     return OutlinedButton(
-      onPressed: () => Get.to(() => OrderDetailsView(order: widget.order)),
+      onPressed: () => AnimatedGet.toWithSlideRight(OrderDetailsView(order: widget.order)),
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: primaryColor),
         shape: RoundedRectangleBorder(
@@ -188,7 +189,7 @@ class _OrderActionButtonsState extends State<OrderActionButtons> {
 
   Widget _buildReviewButton() {
     return ElevatedButton.icon(
-      onPressed: () => Get.to(() => SendReviewView(order: widget.order)),
+      onPressed: () => AnimatedGet.toWithSlideUp(SendReviewView(order: widget.order)),
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.amber,
         foregroundColor: Colors.white,

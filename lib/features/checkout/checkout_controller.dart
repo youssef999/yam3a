@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:shop_app/core/models/service.dart';
 import 'package:shop_app/core/models/package.dart';
 import 'package:shop_app/core/utils/local_db.dart';
+import 'package:shop_app/features/payments/payment_controller.dart';
 
 enum PaymentMethod { cash, visa }
 
@@ -219,10 +220,12 @@ class CheckoutController extends GetxController {
         'updatedAt': FieldValue.serverTimestamp(),
       };
       
-      await _firestore.collection('orders').add(orderData);
+      // Save order to Firestore and get the document reference
+      final orderDocRef = await _firestore.collection('orders').add(orderData);
+      final orderId = orderDocRef.id;
       
       if (kDebugMode) {
-        print('✅ Order placed successfully');
+        print('✅ Order placed successfully with ID: $orderId');
         print('💳 Payment: ${selectedPaymentMethod == PaymentMethod.cash ? "Cash" : "Visa"}');
         print('💰 Actual Total: BD $actualTotalPrice');
         print('💵 Paid Amount: BD $totalPrice');
@@ -236,8 +239,17 @@ class CheckoutController extends GetxController {
           print('📅 Receive Date: ${receiveDate!.toIso8601String()}');
         }
       }
+
+      // Create and process payment breakdown after successful order
+      await _processPaymentBreakdown(orderId, userEmail, userName);
       
-      Get.snackbar('success'.tr, 'order_placed_successfully'.tr, snackPosition: SnackPosition.BOTTOM);
+      if (kDebugMode) {
+        print('✅ Payment breakdown processed and saved to Firestore');
+      }
+      
+   
+
+     
       
       return true;
     } catch (e) {
@@ -249,8 +261,53 @@ class CheckoutController extends GetxController {
       
       return false;
     } finally {
+      Get.snackbar('success'.tr, 'order_placed_successfully'.tr, snackPosition: SnackPosition.BOTTOM);
       isLoading = false;
       update();
+    }
+  }
+
+  /// Process payment breakdown and save to Firestore payments collection
+  Future<void> _processPaymentBreakdown(String orderId, String userEmail, String userName) async {
+    try {
+      // Prepare user data from local_db
+      final userData = {
+        'name': storage.userName ?? userName,
+        'email': storage.userEmail ?? userEmail,
+      };
+
+      // Prepare seller/brand data from checkout context
+      final sellerData = {
+        'name': brandName,
+        'brandName': brandName,
+        'email': brandEmail,
+        'brandEmail': brandEmail,
+        'brandImage': brandImage,
+      };
+
+      // Create PaymentController with order details
+      PaymentController(
+        totalMoney: totalPrice, // Use the paid amount for commission calculation
+        orderId: orderId,
+        userData: userData,
+        sellerData: sellerData,
+      );
+
+      // The PaymentController automatically calculates and saves to Firestore
+      // when calculatePaymentBreakdown() is called in constructor
+      
+      if (kDebugMode) {
+        print('💰 Payment breakdown initiated for order: $orderId');
+        print('👤 User from local_db: ${storage.userName} (${storage.userEmail})');
+        print('🏪 Brand from checkout: $brandName ($brandEmail)');
+        print('💵 Total Amount: BD ${totalPrice.toStringAsFixed(2)}');
+      }
+
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error processing payment breakdown: $e');
+      }
+      // Don't throw error here as order was already successful
     }
   }
   

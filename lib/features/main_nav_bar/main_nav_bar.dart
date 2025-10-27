@@ -29,7 +29,6 @@ class AppBottomBar extends StatelessWidget {
       builder: (controller) {
         final navItems = [
           {'icon': Icons.home_rounded, 'label': 'home'.tr},
-          {'icon': Icons.favorite_rounded, 'label': 'favorites'.tr},
           {'icon': Icons.shopping_bag_rounded, 'label': 'orders'.tr},
           {'icon': Icons.person_rounded, 'label': 'profile'.tr},
         ];
@@ -40,16 +39,13 @@ class AppBottomBar extends StatelessWidget {
             index: controller.currentIndex,
             children: const [
               // Home Tab - Service Home View
-             HomeView(),
-              
-              // Favorites Tab - Favorites View
               HomeView(),
-
+              
+              // Orders Tab - Orders View
               OrdersView(),
 
+              // Profile Tab - Profile View
               ProfileView(),
-              
-             
             ],
           ),
           bottomNavigationBar: Container(
@@ -62,8 +58,9 @@ class AppBottomBar extends StatelessWidget {
                   offset: const Offset(0, -2),
                 ),
               ],
+              borderRadius:BorderRadius.circular(12),
               border: Border(
-                top: BorderSide(color: Colors.grey[200]!, width: 0.5),
+                top: BorderSide(color:primaryColor, width: 0.1),
               ),
             ),
             child: SafeArea(
@@ -71,44 +68,48 @@ class AppBottomBar extends StatelessWidget {
                 height: 112,
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // Left navigation items
-                    _buildBottomNavItem(
-                      controller: controller,
-                      index: 0,
-                      icon: navItems[0]['icon'] as IconData,
-                      label: navItems[0]['label'] as String,
-                      isSelected: controller.currentIndex == 0,
-                    ),
-                    _buildBottomNavItem(
-                      controller: controller,
-                      index: 1,
-                      icon: navItems[1]['icon'] as IconData,
-                      label: navItems[1]['label'] as String,
-                      isSelected: controller.currentIndex == 1,
+                    // Home navigation item
+                    Expanded(
+                      flex: 1,
+                      child: _buildBottomNavItem(
+                        controller: controller,
+                        index: 0,
+                        icon: navItems[0]['icon'] as IconData,
+                        label: navItems[0]['label'] as String,
+                        isSelected: controller.currentIndex == 0,
+                      ),
                     ),
                     
-                    // Center logo with more space
+                    // Orders navigation item
                     Expanded(
-                      flex: 2,
+                      flex: 1,
+                      child: _buildBottomNavItem(
+                        controller: controller,
+                        index: 1,
+                        icon: navItems[1]['icon'] as IconData,
+                        label: navItems[1]['label'] as String,
+                        isSelected: controller.currentIndex == 1,
+                      ),
+                    ),
+                    
+                    // Center logo
+                    Expanded(
+                      flex: 1,
                       child: _buildCenterLogo(controller),
                     ),
                     
-                    // Right navigation items
-                    _buildBottomNavItem(
-                      controller: controller,
-                      index: 2,
-                      icon: navItems[2]['icon'] as IconData,
-                      label: navItems[2]['label'] as String,
-                      isSelected: controller.currentIndex == 2,
-                    ),
-                    _buildBottomNavItem(
-                      controller: controller,
-                      index: 3,
-                      icon: navItems[3]['icon'] as IconData,
-                      label: navItems[3]['label'] as String,
-                      isSelected: controller.currentIndex == 3,
+                    // Profile navigation item
+                    Expanded(
+                      flex: 1,
+                      child: _buildBottomNavItem(
+                        controller: controller,
+                        index: 2,
+                        icon: navItems[2]['icon'] as IconData,
+                        label: navItems[2]['label'] as String,
+                        isSelected: controller.currentIndex == 2,
+                      ),
                     ),
                   ],
                 ),
@@ -131,11 +132,10 @@ class AppBottomBar extends StatelessWidget {
     buttonColor is Color ? buttonColor as Color : const Color(0xFFE47B39);
   final Color inactiveGrey = Colors.grey.shade400;
 
-    return Expanded(
-      child: InkWell(
-        onTap: () => controller.changeIndex(index),
-        borderRadius: BorderRadius.circular(20),
-        child: AnimatedContainer(
+    return InkWell(
+      onTap: () => controller.changeIndex(index),
+      borderRadius: BorderRadius.circular(20),
+      child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
           padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 4),
@@ -210,7 +210,6 @@ class AppBottomBar extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/models/brand.dart';
 import 'package:shop_app/core/res/app_colors.dart';
+import 'package:shop_app/core/animations/page_transitions.dart';
 import 'package:shop_app/features/brand_details/brand_details.dart';
 
 class BrandCard extends StatelessWidget {
@@ -11,9 +12,9 @@ class BrandCard extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		return InkWell(
-			onTap: () => Get.to(() => BrandDetailsView(brand: brand)),
-			borderRadius: BorderRadius.circular(16),
+	return InkWell(
+		onTap: () => AnimatedGet.toWithSlideRight(BrandDetailsView(brand: brand)),
+		borderRadius: BorderRadius.circular(16),
 			child: Container(
 			decoration: BoxDecoration(
 				color: Colors.white,

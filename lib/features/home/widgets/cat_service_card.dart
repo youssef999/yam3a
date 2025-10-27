@@ -2,6 +2,7 @@
 
   import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shop_app/core/animations/page_transitions.dart';
 import 'package:shop_app/features/brands/brands_view.dart';
 import 'package:shop_app/features/home/models/cat_service.dart';
 
@@ -37,8 +38,7 @@ Widget catServiceCard({
 
     return InkWell(
       onTap: () {
-        final categoryName = Get.locale?.languageCode == 'ar' ? catService.nameAr : catService.name;
-        Get.to(BrandsView(category: catService));
+        AnimatedGet.toWithSlideRight(BrandsView(category: catService));
       },
       borderRadius: BorderRadius.circular(16),
       child: Container(

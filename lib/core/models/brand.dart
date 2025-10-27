@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Brand {
   final String id;
   final String name;
+  final String email;
+  final String phone;
   final String nameAr;
   final String image;
   final String description;
@@ -11,18 +13,22 @@ class Brand {
   final String categoryEn;
   final double rating;
   final int reviewCount;
+  final int deliveryTime;
 
   const Brand({
     required this.id,
     required this.name,
     required this.nameAr,
     required this.image,
+    required this.email,
+    required this.phone,
     required this.description,
     required this.descriptionEn,
     required this.category,
     required this.categoryEn,
     this.rating = 0.0,
     this.reviewCount = 0,
+    this.deliveryTime = 2,
   });
 
   Map<String, dynamic> toMap() {
@@ -31,12 +37,15 @@ class Brand {
       'name': name,
       'nameAr': nameAr,
       'image': image,
+      'email': email,
+      'phone': phone,
       'des': description,
       'desEn': descriptionEn,
       'cat': category,
       'catEn': categoryEn,
       'rating': rating,
       'reviewCount': reviewCount,
+      'deliveryTime': deliveryTime,
     };
   }
 
@@ -44,6 +53,8 @@ class Brand {
     final map = data ?? <String, dynamic>{};
     return Brand(
       id: map['id'] as String? ?? id,
+      email: map['email'] as String? ?? '',
+      phone: map['phone'] as String? ?? '',
       name: map['name'] as String? ?? '',
       nameAr: map['nameAr'] as String? ?? '',
       image: map['image'] as String? ?? '',
@@ -53,6 +64,7 @@ class Brand {
       categoryEn: map['catEn'] as String? ?? '',
       rating: (map['rating'] ?? 0.0).toDouble(),
       reviewCount: (map['reviewCount'] ?? 0).toInt(),
+      deliveryTime: (map['deliveryTime'] ?? 2).toInt(),
     );
   }
 

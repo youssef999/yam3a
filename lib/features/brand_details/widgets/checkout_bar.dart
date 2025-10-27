@@ -4,6 +4,7 @@
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:shop_app/features/brand_details/widgets/tabs_bar_widget.dart';
+import 'package:shop_app/core/animations/page_transitions.dart';
 
 import '../../../core/models/brand.dart';
 import '../../checkout/checkout_controller.dart';
@@ -382,7 +383,7 @@ class CheckoutBar extends StatelessWidget {
                                   image: brand.image,
                                   selectedReceiveDate: controller.selectedReceiveDate,
                                 );											// Navigate to checkout
-											final result = await Get.to(() => const CheckoutView());
+											final result = await AnimatedGet.toWithSlideUp(const CheckoutView());
 
 											// If order placed successfully, clear selections
 											if (result == true) {

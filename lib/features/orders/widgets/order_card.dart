@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shop_app/core/animations/page_transitions.dart';
 import 'package:shop_app/features/orders/order_model.dart';
 import 'package:shop_app/features/orders/orders_controller.dart';
 import 'package:shop_app/features/orders/order_details_view.dart';
@@ -21,7 +22,7 @@ class OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.to(() => OrderDetailsView(order: order)),
+      onTap: () => AnimatedGet.toWithSlideRight(OrderDetailsView(order: order)),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(

@@ -24,6 +24,7 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     _initializeHomeData();
+    //testUpdateBrandsDeliveryTime();
   }
 
 
@@ -144,46 +145,46 @@ class HomeController extends GetxController {
     debugPrint('services seeding complete');
   }
 
-  Future<void> seedTestBrands({bool overwrite = false}) async {
-    if (catServices.isEmpty) {
-      await fetchCatServices();
-    }
+  // Future<void> seedTestBrands({bool overwrite = false}) async {
+  //   if (catServices.isEmpty) {
+  //     await fetchCatServices();
+  //   }
 
-    for (final category in catServices) {
-      for (var i = 0; i < 3; i++) {
-        final brandId = '${category.id}_brand_${i + 1}';
-        final docRef = _firestore.collection('brands').doc(brandId);
+  //   for (final category in catServices) {
+  //     for (var i = 0; i < 3; i++) {
+  //       final brandId = '${category.id}_brand_${i + 1}';
+  //       final docRef = _firestore.collection('brands').doc(brandId);
 
-        if (!overwrite) {
-          final exists = await docRef.get();
-          if (exists.exists) {
-            continue;
-          }
-        }
+  //       if (!overwrite) {
+  //         final exists = await docRef.get();
+  //         if (exists.exists) {
+  //           continue;
+  //         }
+  //       }
 
-        final brand = Brand(
-          id: brandId,
-          name: '${category.name} Creators ${i + 1}',
-          nameAr: 'مبدعو ${category.nameAr} ${i + 1}',
-          image: category.image,
-          description:
-              'علامة تقدم حلول ${category.name} مع فريق متخصص وخبرة واسعة.',
-          descriptionEn:
-              '${category.name} specialists delivering tailored experiences.',
-          category: category.name,
-          categoryEn: category.name,
-        );
+  //       final brand = Brand(
+  //         id: brandId,
+  //         name: '${category.name} Creators ${i + 1}',
+  //         nameAr: 'مبدعو ${category.nameAr} ${i + 1}',
+  //         image: category.image,
+  //         description:
+  //             'علامة تقدم حلول ${category.name} مع فريق متخصص وخبرة واسعة.',
+  //         descriptionEn:
+  //             '${category.name} specialists delivering tailored experiences.',
+  //         category: category.name,
+  //         categoryEn: category.name,
+  //       );
 
-        final data = brand.toMap()
-          ..['catId'] = category.id
-          ..['createdAt'] = FieldValue.serverTimestamp();
+  //       final data = brand.toMap()
+  //         ..['catId'] = category.id
+  //         ..['createdAt'] = FieldValue.serverTimestamp();
 
-        await docRef.set(data, SetOptions(merge: true));
-      }
-    }
+  //       await docRef.set(data, SetOptions(merge: true));
+  //     }
+  //   }
 
-    debugPrint('brands seeding complete');
-  }
+  //   debugPrint('brands seeding complete');
+  // }
 
   Future<void> updateBrandsWithNameAr() async {
     try {
@@ -218,6 +219,49 @@ class HomeController extends GetxController {
       
     } catch (e, stackTrace) {
       debugPrint('Failed to update brands with nameAr: $e');
+      debugPrint(stackTrace.toString());
+    }
+  }
+
+  /// Test function to add deliveryTime field to all brands
+  Future<void> testUpdateBrandsDeliveryTime() async {
+    try {
+      debugPrint('🚀 Starting to update all brands with deliveryTime...');
+      
+      final snapshot = await _firestore.collection('brands').get();
+      
+      if (snapshot.docs.isEmpty) {
+        debugPrint('⚠️ No brands found in collection');
+        return;
+      }
+      
+      int updatedCount = 0;
+      int errorCount = 0;
+      
+      for (final doc in snapshot.docs) {
+        try {
+          // Update the document with deliveryTime field
+          await doc.reference.update({
+            'deliveryTime': 2,
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+          
+          updatedCount++;
+          debugPrint('✅ Updated brand ${doc.id} with deliveryTime: 2');
+          
+        } catch (e) {
+          errorCount++;
+          debugPrint('❌ Failed to update brand ${doc.id}: $e');
+        }
+      }
+      
+      debugPrint('🎉 Update complete!');
+      debugPrint('📊 Total documents: ${snapshot.docs.length}');
+      debugPrint('✅ Successfully updated: $updatedCount');
+      debugPrint('❌ Failed updates: $errorCount');
+      
+    } catch (e, stackTrace) {
+      debugPrint('💥 Failed to update brands with deliveryTime: $e');
       debugPrint(stackTrace.toString());
     }
   }

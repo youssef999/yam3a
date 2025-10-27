@@ -163,6 +163,19 @@ class LocalStorageService {
     return selectedCategoryId != null && selectedCategoryType != null;
   }
   
+  /// Check if user name is empty or null and needs to be fetched
+  bool needsUserNameFetch() {
+    final name = userName;
+    return name == null || name.isEmpty || name == 'user' || name == 'المستخدم';
+  }
+  
+  /// Check if user has complete profile data
+  bool hasCompleteUserData() {
+    return userName != null && userName!.isNotEmpty && 
+           userEmail != null && userEmail!.isNotEmpty &&
+           userName != 'user' && userName != 'المستخدم';
+  }
+  
   /// Get location distance between stored and new coordinates
   double? getLocationDistance(double newLat, double newLng) {
     final storedLat = userLatitude;

@@ -67,7 +67,9 @@ class ProfileView extends StatelessWidget {
                           const SizedBox(height: 5),
                           // User Name
                           Text(
-                            controller.userName,
+                            controller.userName.isEmpty || controller.userName == 'user'.tr
+                                ? 'loading_name'.tr
+                                : controller.userName,
                             style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,

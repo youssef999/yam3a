@@ -4,9 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:shop_app/core/models/brand.dart';
 import 'package:shop_app/core/models/service.dart';
 import 'package:shop_app/core/models/package.dart';
+import 'package:shop_app/core/utils/local_db.dart';
 
 class BrandDetailsController extends GetxController {
 	BrandDetailsController({required this.brand});
@@ -29,12 +31,156 @@ class BrandDetailsController extends GetxController {
 		fetchServices();
 		fetchPackages();
 		fetchMinPriceFromFireStore();
+    checkUserPayForContact();
 	}
 
   num minValueForOrderPercetage=0;
 
+   bool userContactPay=false;
 
-  fetchMinPriceFromFireStore() async {
+ checkUserPayForContact() async {
+   try {
+     String email = storage.userEmail ?? '';
+     print("User email from local DB: $email");
+     
+     if (email.isEmpty) {
+       print("❌ No email found in local DB");
+       return;
+     }
+     
+     // Query contact_pay collection for matching email
+     final snapshot = await _firestore
+         .collection('contact_pay')
+         .where('email', isEqualTo: email)
+         .get();
+     
+     if (snapshot.docs.isNotEmpty) {
+       print("✅ Email found in contact_pay collection");
+       print("📄 Documents found: ${snapshot.docs.length}");
+
+       userContactPay=true;
+       
+       // Print details of found documents
+       for (int i = 0; i < snapshot.docs.length; i++) {
+         final doc = snapshot.docs[i];
+         print("   Document ${i + 1} ID: ${doc.id}");
+         print("   Document ${i + 1} data: ${doc.data()}");
+       }
+     } else {
+       print("❌ Email not found in contact_pay collection");
+     }
+     
+   } catch (e, stackTrace) {
+     print("💥 Error checking contact_pay collection: $e");
+     debugPrint(stackTrace.toString());
+   }
+   update();
+ }
+
+
+ Future<void> makePhoneCall() async {
+   try {
+     if (brand.phone.isEmpty) {
+       Get.snackbar(
+         'error'.tr,
+         'phone_not_available'.tr,
+         snackPosition: SnackPosition.BOTTOM,
+         backgroundColor: Colors.red[100],
+         colorText: Colors.red[800],
+         icon: Icon(Icons.error_outline, color: Colors.red[800]),
+       );
+       return;
+     }
+
+     final phoneNumber = brand.phone;
+     final uri = Uri.parse('tel:$phoneNumber');
+     
+     if (await canLaunchUrl(uri)) {
+       await launchUrl(uri);
+       print('📞 Phone call initiated to: $phoneNumber');
+     } else {
+      await launchUrl(uri);
+      //  Get.snackbar(
+      //    'error'.tr,
+      //    'cannot_make_call'.tr,
+      //    snackPosition: SnackPosition.BOTTOM,
+      //    backgroundColor: Colors.red[100],
+      //    colorText: Colors.red[800],
+      //    icon: Icon(Icons.error_outline, color: Colors.red[800]),
+      //  );
+     }
+   } catch (e) {
+     print('💥 Error making phone call: $e');
+     Get.snackbar(
+       'error'.tr,
+       'phone_call_failed'.tr,
+       snackPosition: SnackPosition.BOTTOM,
+       backgroundColor: Colors.red[100],
+       colorText: Colors.red[800],
+       icon: Icon(Icons.error_outline, color: Colors.red[800]),
+     );
+   }
+ }
+
+ Future<void> openWhatsAppChat() async {
+
+   try {
+     if (brand.phone.isEmpty) {
+       Get.snackbar(
+         'error'.tr,
+         'phone_not_available'.tr,
+         snackPosition: SnackPosition.BOTTOM,
+         backgroundColor: Colors.red[100],
+         colorText: Colors.red[800],
+         icon: Icon(Icons.error_outline, color: Colors.red[800]),
+       );
+       return;
+     }
+
+     // Clean phone number (remove spaces, dashes, etc.)
+     String cleanPhone = brand.phone.replaceAll(RegExp(r'[^\d+]'), '');
+     
+     // Add country code if not present (assuming Bahrain +973)
+     if (!cleanPhone.startsWith('+')) {
+       if (cleanPhone.startsWith('973')) {
+         cleanPhone = '+$cleanPhone';
+       } else {
+         cleanPhone = '+973$cleanPhone';
+       }
+     }
+     cleanPhone = cleanPhone.replaceAll('+973', '');
+     print("Clean phone number for WhatsApp: $cleanPhone");
+
+     final message = Uri.encodeComponent('Hello! I\'m interested in your services from ${brand.name}.');
+     final whatsappUrl = 'https://wa.me/$cleanPhone?text=$message';
+     final uri = Uri.parse(whatsappUrl);
+     
+     if (await canLaunchUrl(uri)) {
+       await launchUrl(uri, mode: LaunchMode.externalApplication);
+       print('💬 WhatsApp chat opened to: $cleanPhone');
+     } else {
+       // Fallback to SMS if WhatsApp is not available
+       final smsUri = Uri.parse('sms:$cleanPhone?body=${Uri.encodeComponent('Hello! I\'m interested in your services from ${brand.name}.')}');
+       if (await canLaunchUrl(smsUri)) {
+         await launchUrl(smsUri);
+         print('📱 SMS opened to: $cleanPhone');
+       } else {
+         await launchUrl(uri, mode: LaunchMode.externalApplication);
+       
+       }
+     }
+   } catch (e) {
+     print('💥 Error opening WhatsApp: $e');
+     Get.snackbar(
+       'error'.tr,
+       'whatsapp_failed'.tr,
+       snackPosition: SnackPosition.BOTTOM,
+       backgroundColor: Colors.red[100],
+       colorText: Colors.red[800],
+       icon: Icon(Icons.error_outline, color: Colors.red[800]),
+     );
+   }
+ }  fetchMinPriceFromFireStore() async {
     try {
       final snapshot = await _firestore
           .collection('minPrice')
@@ -72,13 +218,14 @@ class BrandDetailsController extends GetxController {
 
 
 	Future<void> fetchServices() async {
+    print('Fetching services for brand: ${brand.email}');
 		try {
 			isLoading = true;
 			update();
 
 			final snapshot = await _firestore
 					.collection('services')
-					.where('brandName', isEqualTo: brand.name)
+					.where('brandEmail', isEqualTo: brand.email)
 					.get();
 
 			services
@@ -196,14 +343,23 @@ class BrandDetailsController extends GetxController {
 	// Date picker functionality
 	Future<bool> selectReceiveDate() async {
 		final now = DateTime.now();
-		final firstDate = now.add(const Duration(days: 1)); // Can't select today or past dates
+		// Use brand's deliveryTime to determine the minimum selectable date
+		final minDeliveryDays = brand.deliveryTime; // Get deliveryTime from brand model
+		final firstDate = now.add(Duration(days: minDeliveryDays)); // Can't select before deliveryTime days
 		final lastDate = now.add(const Duration(days: 365)); // Up to 1 year in future
+		if (kDebugMode) {
+			print('📅 Date picker setup:');
+			print('Brand delivery time: $minDeliveryDays days');
+			print('First selectable date: ${firstDate.day}/${firstDate.month}/${firstDate.year}');
+		}
 		
 		final pickedDate = await showDatePicker(
 			context: Get.context!,
 			initialDate: firstDate,
 			firstDate: firstDate,
 			lastDate: lastDate,
+			helpText: 'select_receive_date'.tr,
+			fieldLabelText: 'receive_date'.tr,
 			builder: (context, child) {
 				return Theme(
 					data: Theme.of(context).copyWith(
@@ -240,6 +396,29 @@ class BrandDetailsController extends GetxController {
 	void clearReceiveDate() {
 		selectedReceiveDate = null;
 		update();
+	}
+
+	/// Get the minimum delivery date based on brand's deliveryTime
+	DateTime get minimumDeliveryDate {
+		final now = DateTime.now();
+		return now.add(Duration(days: brand.deliveryTime));
+	}
+
+	/// Get delivery information text
+	String get deliveryInfoText {
+		if (brand.deliveryTime <= 1) {
+			return 'available_next_day'.tr;
+		} else {
+			return 'available_after_days'.trParams({
+				'days': brand.deliveryTime.toString()
+			});
+		}
+	}
+
+	/// Check if a date is valid for delivery
+	bool isValidDeliveryDate(DateTime date) {
+		final minDate = minimumDeliveryDate;
+		return date.isAfter(minDate) || date.isAtSameMomentAs(minDate);
 	}
 
 

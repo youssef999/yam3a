@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/models/brand.dart';
 import 'package:shop_app/core/res/app_colors.dart';
+import 'package:shop_app/core/animations/page_transitions.dart';
 import 'package:shop_app/features/brand_reviews/brand_review.dart';
+import 'package:shop_app/features/brand_details/controllers/brand_details_controller.dart';
+import 'package:shop_app/features/contact_pay/premium_view.dart';
 
 class BrandHeaderWidget extends StatelessWidget {
-  const BrandHeaderWidget({super.key, required this.brand});
+  const BrandHeaderWidget({super.key, required this.brand, required this.controller});
 
   final Brand brand;
+  final BrandDetailsController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +66,15 @@ class BrandHeaderWidget extends StatelessWidget {
                       message: 'call'.tr,
                       child: _CircularIconButton(
                         icon: Icons.phone_outlined,
-                        onTap: () {},
+                        onTap: () {
+                          if( controller.userContactPay==false){
+                            print("Need to pay");
+                            AnimatedGet.toWithScale(const PremiumView());
+                          }else{
+                            print("Making phone call");
+                            controller.makePhoneCall();
+                          }
+                        },
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -70,7 +82,15 @@ class BrandHeaderWidget extends StatelessWidget {
                       message: 'chat'.tr,
                       child: _CircularIconButton(
                         icon: Icons.chat_bubble_outline,
-                        onTap: () {},
+                        onTap: () {
+                          if( controller.userContactPay==false){
+                            print("Need to pay");
+                            AnimatedGet.toWithScale(const PremiumView());
+                          }else{
+                            print("Opening WhatsApp chat");
+                            controller.openWhatsAppChat();
+                          }
+                        },
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -78,7 +98,15 @@ class BrandHeaderWidget extends StatelessWidget {
                       message: 'share'.tr,
                       child: _CircularIconButton(
                         icon: Icons.ios_share,
-                        onTap: () {},
+                        onTap: () {
+                            if( controller.userContactPay==false){
+                 print("Need to pay");
+                 AnimatedGet.toWithScale(const PremiumView());
+              }else{
+ print("don;t need to pay");
+ 
+              }
+                        },
                       ),
                     ),
                   ],
@@ -95,7 +123,15 @@ class BrandHeaderWidget extends StatelessWidget {
                       message: 'call'.tr,
                       child: _CircularIconButton(
                         icon: Icons.phone_outlined,
-                        onTap: () {},
+                        onTap: () {
+                          if( controller.userContactPay==false){
+                            print("Need to pay");
+                            AnimatedGet.toWithScale(const PremiumView());
+                          }else{
+                            print("Making phone call");
+                            controller.makePhoneCall();
+                          }
+                        },
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -103,7 +139,15 @@ class BrandHeaderWidget extends StatelessWidget {
                       message: 'chat'.tr,
                       child: _CircularIconButton(
                         icon: Icons.chat_bubble_outline,
-                        onTap: () {},
+                        onTap: () {
+                          if( controller.userContactPay==false){
+                            print("Need to pay");
+                            AnimatedGet.toWithScale(const PremiumView());
+                          }else{
+                            print("Opening WhatsApp chat");
+                            controller.openWhatsAppChat();
+                          }
+                        },
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -111,7 +155,14 @@ class BrandHeaderWidget extends StatelessWidget {
                       message: 'share'.tr,
                       child: _CircularIconButton(
                         icon: Icons.ios_share,
-                        onTap: () {},
+                        onTap: () {
+                          if( controller.userContactPay==false){
+                            print("Need to pay");
+                            AnimatedGet.toWithScale(const PremiumView());
+                          }else{
+                            print("don;t need to pay");
+                          }
+                        },
                       ),
                     ),
                   ],
@@ -133,7 +184,7 @@ class BrandHeaderWidget extends StatelessWidget {
           left: 20,
           child: GestureDetector(
             onTap: () {
-              Get.to(() => BrandReviewsView(brand: brand));
+              AnimatedGet.toWithSlideRight(BrandReviewsView(brand: brand));
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
