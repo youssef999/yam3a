@@ -176,6 +176,21 @@ class LocalStorageService {
            userName != 'user' && userName != 'المستخدم';
   }
   
+  /// Delete all user data (logout functionality)
+  Future<void> deleteAllUserData() async {
+    await deleteAuthToken();
+    await deleteUserName();
+    await deleteUserEmail();
+  }
+  
+  /// Complete logout - clears all user and app data
+  Future<void> logout() async {
+    await deleteAllUserData();
+    await deleteAllLocationData();  
+    await deleteAllCategoryData();
+    // Keep language preference during logout
+  }
+  
   /// Get location distance between stored and new coordinates
   double? getLocationDistance(double newLat, double newLng) {
     final storedLat = userLatitude;

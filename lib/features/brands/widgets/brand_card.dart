@@ -13,7 +13,10 @@ class BrandCard extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 	return InkWell(
-		onTap: () => AnimatedGet.toWithSlideRight(BrandDetailsView(brand: brand)),
+		onTap: () {
+      Get.to(BrandDetailsView(brand: brand));
+    },
+   // => AnimatedGet.toWithSlideRight(BrandDetailsView(brand: brand)),
 		borderRadius: BorderRadius.circular(16),
 			child: Container(
 			decoration: BoxDecoration(

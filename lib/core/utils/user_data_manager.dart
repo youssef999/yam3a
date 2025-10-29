@@ -104,4 +104,15 @@ class UserDataManager {
   static bool isUserDataComplete() {
     return storage.hasCompleteUserData();
   }
+  
+  /// Logout user and clear all data
+  static Future<void> logoutUser() async {
+    try {
+      await storage.logout();
+      print('User logged out successfully, all data cleared');
+    } catch (e) {
+      print('Error during logout: $e');
+      throw e;
+    }
+  }
 }

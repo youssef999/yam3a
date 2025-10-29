@@ -25,4 +25,12 @@ class AppRoutes {
   // Order related screens
   static const String orders = '/orders';
   static const String orderDetails = '/order-details';
+  
+  // Chat related screens
+  static const String chatList = '/chat_list';
+  static const String chat = '/chat';
+  
+  // Brand related screens
+  static const String brands = '/brands';
+  static const String brandDetails = '/brand_details';
 }

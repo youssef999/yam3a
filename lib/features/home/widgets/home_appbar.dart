@@ -7,6 +7,7 @@ import 'package:shop_app/core/animations/page_transitions.dart';
 import 'package:shop_app/features/notifications/noti_controller.dart';
 import 'package:shop_app/features/notifications/noti_view.dart';
 import 'package:shop_app/features/search/search_view.dart';
+import 'package:shop_app/features/test_notifications/test_notifications_view.dart';
 
 class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
 	const HomeAppBar({super.key});
@@ -66,7 +67,8 @@ class _HomeAppBarState extends State<HomeAppBar> {
 				IconButton(
 					icon:  Icon(Icons.search, color: appBarIconColor),
 					onPressed: () {
-            AnimatedGet.toWithSlideRight(const SearchView());
+            Get.to(const TestNotificationsView());
+            //AnimatedGet.toWithSlideRight(const SearchView());
           },
 				),
 				_buildNotificationIcon(),

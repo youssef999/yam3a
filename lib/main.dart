@@ -7,14 +7,38 @@ import 'package:shop_app/core/language/local.dart';
 import 'package:shop_app/core/language/local_controller.dart';
 import 'package:shop_app/core/utils/local_db.dart';
 import 'package:shop_app/core/res/app_colors.dart';
+import 'package:shop_app/features/chat/chat_list_view.dart';
 import 'package:shop_app/features/splash/splash_view.dart';
 import 'package:shop_app/core/constants/app_routes.dart';
 import 'package:shop_app/features/login/login_view.dart';
+import 'package:shop_app/core/noti/recieve_noti.dart';
+import 'package:shop_app/features/test_notifications/test_notifications_view.dart';
+import 'package:shop_app/features/debug/device_token_debug_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
   await Firebase.initializeApp();
-  await setupLocalStorage(); // Setup before runApp
+  
+  // Setup local storage
+  await setupLocalStorage();
+  
+  // Initialize FCM notifications
+  final fcmReceiver = Get.put(FCMNotificationReceiver(), permanent: true);
+  
+  // Wait a moment for FCM to initialize and print the device token
+  Future.delayed(const Duration(seconds: 3), () {
+    final token = fcmReceiver.deviceToken;
+    if (token != null) {
+      debugPrint('🔥🔥🔥 DEVICE TOKEN FOR TESTING 🔥🔥🔥');
+      debugPrint('📱 Token: $token');
+      debugPrint('🔥🔥🔥 COPY THIS TOKEN FOR FCM TESTING 🔥🔥🔥');
+    } else {
+      debugPrint('⚠️ Device token not yet available, check logs for updates');
+    }
+  });
+  //eFmrF2qjTwqN8WezEinrwa:APA91bH0lDB2SwudqyT1ZQySis6y4luF6NL525vLoHw34NAOjxZq94596mkVdi1Z72Lmokc_6INt6W72o52t-K8LEIla_aBuF9gojzAtOW8WN1xL19NyQJc
   runApp(const MyApp());
 }
 
@@ -156,11 +180,15 @@ class MyApp extends StatelessWidget {
       initialBinding: MyBinding(),
       locale: lang,
       translations: MyLocal(),
-      title: 'Shop App',
+      title: 'Yamma',
       initialRoute: AppRoutes.splash,
       getPages: [
         GetPage(name: AppRoutes.splash, page: () => const SplashScreen()),
         GetPage(name: AppRoutes.login, page: () => const LoginView()),
+        GetPage(name: AppRoutes.chatList, page: () => const ChatListView()),
+        GetPage(name: '/test_notifications', page: () => const TestNotificationsView()),
+        GetPage(name: '/debug_token', page: () => const DeviceTokenDebugView()),
+       // GetPage(name: AppRoutes.chat, page: () => const ChatView(brand: null,)),
         // Add other routes as they are implemented
         // GetPage(name: AppRoutes.home, page: () => const HomeView()),
       ],

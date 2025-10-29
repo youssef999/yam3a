@@ -16,6 +16,8 @@ class ProfileView extends StatelessWidget {
         builder: (controller) {
           return CustomScrollView(
             slivers: [
+
+
               // Gradient App Bar with User Info
               SliverAppBar(
                 expandedHeight: 200,
@@ -123,14 +125,15 @@ class ProfileView extends StatelessWidget {
                             iconBgColor: const Color(0xff5A1E3D).withOpacity(0.1),
                             onTap: () => controller.showLanguageDialog(),
                           ),
+                         
                           _buildDivider(),
                           _buildProfileOption(
-                            icon: Icons.email_outlined,
-                            title: 'change_email'.tr,
-                            subtitle: controller.userEmail,
-                            iconColor: const Color(0xffE28743),
-                            iconBgColor: const Color(0xffE28743).withOpacity(0.1),
-                            onTap: () => controller.showEmailDialog(),
+                            icon: Icons.logout,
+                            title: 'logout'.tr,
+                            subtitle: 'sign_out_account'.tr,
+                            iconColor: Colors.red,
+                            iconBgColor: Colors.red.withOpacity(0.1),
+                            onTap: () => controller.showLogoutDialog(),
                           ),
                         ],
                       ),

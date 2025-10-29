@@ -5,6 +5,7 @@ import 'package:shop_app/core/res/app_colors.dart';
 import 'package:shop_app/features/home/home_controller.dart';
 import 'package:shop_app/features/home/widgets/cat_service_card.dart';
 import 'package:shop_app/features/home/widgets/home_appbar.dart';
+import 'package:shop_app/features/test_controller.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -21,6 +22,7 @@ class _HomeViewState extends State<HomeView> {
     if (!Get.isRegistered<HomeController>()) {
       Get.put(HomeController()); 
     }
+    addDeviceTokenToAllBrands();
     super.initState();
   }
   @override

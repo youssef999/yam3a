@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:shop_app/core/models/service.dart';
 import 'package:shop_app/core/models/package.dart';
+import 'package:shop_app/core/utils/app_message.dart';
 import 'package:shop_app/core/utils/local_db.dart';
+import 'package:shop_app/features/main_nav_bar/main_nav_bar.dart';
 import 'package:shop_app/features/payments/payment_controller.dart';
 
 enum PaymentMethod { cash, visa }
@@ -118,7 +120,7 @@ class CheckoutController extends GetxController {
   
   Future<bool> placeOrder() async {
     if (locationData == null) {
-      Get.snackbar('error'.tr, 'location_data_required'.tr, snackPosition: SnackPosition.BOTTOM);
+     // Get.snackbar('error'.tr, 'location_data_required'.tr, snackPosition: SnackPosition.BOTTOM);
       return false;
     }
     
@@ -242,7 +244,7 @@ class CheckoutController extends GetxController {
 
       // Create and process payment breakdown after successful order
       await _processPaymentBreakdown(orderId, userEmail, userName);
-      
+
       if (kDebugMode) {
         print('✅ Payment breakdown processed and saved to Firestore');
       }
@@ -261,7 +263,9 @@ class CheckoutController extends GetxController {
       
       return false;
     } finally {
-      Get.snackbar('success'.tr, 'order_placed_successfully'.tr, snackPosition: SnackPosition.BOTTOM);
+            appMessageSuccess(text: 'Order Sent Successfully'.tr, context: Get.context!);
+      Get.offAll(const AppBottomBar());
+    //  Get.snackbar('success'.tr, 'order_placed_successfully'.tr, snackPosition: SnackPosition.BOTTOM);
       isLoading = false;
       update();
     }

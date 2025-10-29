@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:shop_app/core/res/app_colors.dart';
 import 'package:shop_app/features/home/home_view.dart';
 import 'package:shop_app/features/orders/orders_view.dart';
+import 'package:shop_app/features/chat/chat_list_view.dart';
 import 'package:shop_app/features/profile/profile_view.dart';
 
 
@@ -30,6 +31,7 @@ class AppBottomBar extends StatelessWidget {
         final navItems = [
           {'icon': Icons.home_rounded, 'label': 'home'.tr},
           {'icon': Icons.shopping_bag_rounded, 'label': 'orders'.tr},
+          {'icon': Icons.chat_rounded, 'label': 'chats'.tr},
           {'icon': Icons.person_rounded, 'label': 'profile'.tr},
         ];
 
@@ -43,6 +45,9 @@ class AppBottomBar extends StatelessWidget {
               
               // Orders Tab - Orders View
               OrdersView(),
+
+              // Chat Tab - Chat List View
+              ChatListView(),
 
               // Profile Tab - Profile View
               ProfileView(),
@@ -94,10 +99,22 @@ class AppBottomBar extends StatelessWidget {
                       ),
                     ),
                     
-                    // Center logo
+                    // Center logo (still navigates to home)
                     Expanded(
                       flex: 1,
                       child: _buildCenterLogo(controller),
+                    ),
+                    
+                    // Chat navigation item with badge
+                    Expanded(
+                      flex: 1,
+                      child: _buildChatNavItem(
+                        controller: controller,
+                        index: 2,
+                        icon: navItems[2]['icon'] as IconData,
+                        label: navItems[2]['label'] as String,
+                        isSelected: controller.currentIndex == 2,
+                      ),
                     ),
                     
                     // Profile navigation item
@@ -105,10 +122,10 @@ class AppBottomBar extends StatelessWidget {
                       flex: 1,
                       child: _buildBottomNavItem(
                         controller: controller,
-                        index: 2,
-                        icon: navItems[2]['icon'] as IconData,
-                        label: navItems[2]['label'] as String,
-                        isSelected: controller.currentIndex == 2,
+                        index: 3,
+                        icon: navItems[3]['icon'] as IconData,
+                        label: navItems[3]['label'] as String,
+                        isSelected: controller.currentIndex == 3,
                       ),
                     ),
                   ],
@@ -177,6 +194,104 @@ class AppBottomBar extends StatelessWidget {
                   size: isSelected ? 19 : 17,
                   color: isSelected ? Colors.white : inactiveGrey,
                 ),
+              ),
+              const SizedBox(height: 4),
+              AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOutCubic,
+                style: TextStyle(
+                  fontFamily: 'fs_albert',
+                  fontSize: isSelected ? 12 : 11,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: isSelected
+                      ? resolvedButtonColor
+                      : inactiveGrey,
+                ),
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(height: 4),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutCubic,
+                height: 2,
+                  width: isSelected ? 26 : 0,
+                decoration: BoxDecoration(
+                  color: resolvedButtonColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ],
+          ),
+        ),
+    );
+  }
+
+  Widget _buildChatNavItem({
+    required ServiceBottomBarController controller,
+    required int index,
+    required IconData icon,
+    required String label,
+    required bool isSelected,
+  }) {
+    final Color resolvedButtonColor =
+      buttonColor is Color ? buttonColor as Color : const Color(0xFFE47B39);
+    final Color inactiveGrey = Colors.grey.shade400;
+
+    return InkWell(
+      onTap: () => controller.changeIndex(index),
+      borderRadius: BorderRadius.circular(20),
+      child: AnimatedContainer(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 4),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? resolvedButtonColor.withOpacity(0.16)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Stack(
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 220),
+                    curve: Curves.easeOutCubic,
+                    height: isSelected ? 43 : 39,
+                    width: isSelected ? 42 : 39,
+                    decoration: BoxDecoration(
+                      color: isSelected ? resolvedButtonColor : Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        if (isSelected)
+                          BoxShadow(
+                            color: resolvedButtonColor.withOpacity(0.35),
+                            blurRadius: 16,
+                            offset: const Offset(0, 8),
+                          ),
+                      ],
+                      border: Border.all(
+                        color:
+                            isSelected ? resolvedButtonColor : Colors.grey.shade200,
+                        width: 1,
+                      ),
+                    ),
+                    child: Icon(
+                      icon,
+                      size: isSelected ? 19 : 17,
+                      color: isSelected ? Colors.white : inactiveGrey,
+                    ),
+                  ),
+                  // Unread messages badge placeholder - can be enhanced later
+                  const SizedBox.shrink(),
+                ],
               ),
               const SizedBox(height: 4),
               AnimatedDefaultTextStyle(

@@ -271,6 +271,135 @@ class ProfileController extends GetxController {
     }
   }
   
+  Future<void> logout() async {
+    try {
+      isLoading = true;
+      update();
+      
+      // Clear all user data from local storage
+      await storage.logout();
+      
+      Get.snackbar(
+        'success'.tr,
+        'logged_out_successfully'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+      
+      // Navigate to login screen and clear navigation stack
+      Get.offAllNamed('/login'); // Adjust route name based on your routing
+      
+    } catch (e) {
+      Get.snackbar(
+        'error'.tr,
+        'logout_failed'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+  
+  void showLogoutDialog() {
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.logout,
+                  color: Colors.red,
+                  size: 32,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'logout_confirmation'.tr,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'logout_warning'.tr,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text('cancel'.tr),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GetBuilder<ProfileController>(
+                      builder: (controller) {
+                        return ElevatedButton(
+                          onPressed: controller.isLoading
+                              ? null
+                              : () {
+                                  Get.back();
+                                  logout();
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: controller.isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text('logout'.tr),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  
   void showLanguageDialog() {
     Get.dialog(
       Dialog(
@@ -536,14 +665,7 @@ class ProfileController extends GetxController {
                 ),
                 child: Column(
                   children: [
-                    Text(
-                      'made_with_love'.tr,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
+                 
                     Text(
                       '© 2025 Yamaa. All rights reserved.',
                       style: TextStyle(

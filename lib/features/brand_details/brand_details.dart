@@ -107,7 +107,7 @@ class _BrandDetailsViewState extends State<BrandDetailsView> {
 				    borderRadius: BorderRadius.circular(8),
 				  ),
 				  child: IconButton(
-				    icon: Icon(Icons.email, color: Colors.grey[700], size: 19),
+				    icon: Icon(Icons.chat, color: Colors.grey[700], size: 19),
 				    onPressed: (){
 				      	final controller=Get.find<BrandDetailsController>(tag: widget.brand.id);
 				              
@@ -115,11 +115,11 @@ class _BrandDetailsViewState extends State<BrandDetailsView> {
 				                 print("Need to pay");
 				                 AnimatedGet.toWithScale(const PremiumView());
 				              }else{
-				                 print("Opening WhatsApp chat from app bar");
-				                 controller.openWhatsAppChat();
+				                 print("Opening chat with brand from app bar");
+				                 controller.openChatWithBrand();
 				              }
 				    },
-				    tooltip: 'message_brand'.tr,
+				    tooltip: 'chat_with_brand'.trParams({'brand': widget.brand.name}),
 				  ),
 				),
         const SizedBox(width: 10),

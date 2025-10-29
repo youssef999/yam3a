@@ -11,7 +11,7 @@
 
 
     <application
-        android:label="Mountain Store"
+        android:label="Yamma"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

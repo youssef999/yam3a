@@ -9,6 +9,8 @@ import 'package:shop_app/core/models/brand.dart';
 import 'package:shop_app/core/models/service.dart';
 import 'package:shop_app/core/models/package.dart';
 import 'package:shop_app/core/utils/local_db.dart';
+import 'package:shop_app/features/chat/chat_view.dart';
+
 
 class BrandDetailsController extends GetxController {
 	BrandDetailsController({required this.brand});
@@ -174,6 +176,43 @@ class BrandDetailsController extends GetxController {
      Get.snackbar(
        'error'.tr,
        'whatsapp_failed'.tr,
+       snackPosition: SnackPosition.BOTTOM,
+       backgroundColor: Colors.red[100],
+       colorText: Colors.red[800],
+       icon: Icon(Icons.error_outline, color: Colors.red[800]),
+     );
+   }
+ }
+
+ /// Open chat with brand (replaces WhatsApp when user has paid for contact)
+ Future<void> openChatWithBrand() async {
+   try {
+     if (brand.email.isEmpty) {
+       Get.snackbar(
+         'error'.tr,
+         'brand_email_not_available'.tr,
+         snackPosition: SnackPosition.BOTTOM,
+         backgroundColor: Colors.red[100],
+         colorText: Colors.red[800],
+         icon: Icon(Icons.error_outline, color: Colors.red[800]),
+       );
+       return;
+     }
+
+     print('💬 Opening chat with brand: ${brand.name} (${brand.email})');
+     
+     // Navigate to chat view with smooth animation
+     Get.to(
+       () => ChatView(brand: brand),
+       transition: Transition.rightToLeft,
+       duration: const Duration(milliseconds: 300),
+     );
+     
+   } catch (e) {
+     print('💥 Error opening chat: $e');
+     Get.snackbar(
+       'error'.tr,
+       'failed_to_open_chat'.tr,
        snackPosition: SnackPosition.BOTTOM,
        backgroundColor: Colors.red[100],
        colorText: Colors.red[800],
