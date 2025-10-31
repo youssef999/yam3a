@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:shop_app/core/models/brand.dart';
 import 'package:shop_app/core/models/service.dart';
 import 'package:shop_app/core/models/package.dart';
+import 'package:shop_app/core/noti/send_noti_controller.dart';
 import 'package:shop_app/core/utils/app_message.dart';
 import 'package:shop_app/core/utils/local_db.dart';
 import 'package:shop_app/features/main_nav_bar/main_nav_bar.dart';
@@ -20,6 +22,7 @@ class CheckoutController extends GetxController {
   String brandName = '';
   String brandEmail = '';
   String brandImage = '';
+  String brandDeviceToken = '';
   DateTime? receiveDate;
   
   Map<String, dynamic>? locationData;
@@ -39,6 +42,7 @@ class CheckoutController extends GetxController {
     required double price,
     required String brand,
     required String email,
+    required String deviceToken,
     required String image,
     double? actualOrderTotal, // Original order total before minimum adjustment
     DateTime? selectedReceiveDate,
@@ -50,10 +54,20 @@ class CheckoutController extends GetxController {
     brandName = brand;
     brandEmail = email;
     brandImage = image;
+    brandDeviceToken = deviceToken;
     receiveDate = selectedReceiveDate;
     update();
+    print("=====brandDeviceToken=======: $brandDeviceToken");
   }
   
+  /// Loads user location data from Firestore
+  /// 
+  /// If the user has no location data, the function will return immediately
+  /// 
+  /// If the user has location data, the function will update the
+  /// [locationData] field with the loaded data and print a debug message
+  /// if in debug mode
+
   Future<void> loadLocationData() async {
     try {
       isLoadingLocation = true;
@@ -117,8 +131,9 @@ class CheckoutController extends GetxController {
     if (locationData == null) return 'not_set'.tr;
     return locationData!['phone']?.toString() ?? 'not_set'.tr;
   }
+
   
-  Future<bool> placeOrder() async {
+  Future<bool> placeOrder () async {
     if (locationData == null) {
      // Get.snackbar('error'.tr, 'location_data_required'.tr, snackPosition: SnackPosition.BOTTOM);
       return false;
@@ -245,6 +260,8 @@ class CheckoutController extends GetxController {
       // Create and process payment breakdown after successful order
       await _processPaymentBreakdown(orderId, userEmail, userName);
 
+      sendNewOrderNotificationToTheVendor(brandDeviceToken);
+
       if (kDebugMode) {
         print('✅ Payment breakdown processed and saved to Firestore');
       }
@@ -269,6 +286,15 @@ class CheckoutController extends GetxController {
       isLoading = false;
       update();
     }
+  }
+
+
+  sendNewOrderNotificationToTheVendor(String brandDeviceToken)async{
+
+FCMNotificationSender sendController = FCMNotificationSender();
+
+sendController.sendBrandNotification(deviceToken: brandDeviceToken
+, brandName: brandName, notificationMessage:'طلب جديد تم استلامه');
   }
 
   /// Process payment breakdown and save to Firestore payments collection

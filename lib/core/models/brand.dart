@@ -11,9 +11,11 @@ class Brand {
   final String descriptionEn;
   final String category;
   final String categoryEn;
+  final String deviceToken;
   final double rating;
   final int reviewCount;
   final int deliveryTime;
+
 
   const Brand({
     required this.id,
@@ -25,6 +27,7 @@ class Brand {
     required this.description,
     required this.descriptionEn,
     required this.category,
+    required this.deviceToken,
     required this.categoryEn,
     this.rating = 0.0,
     this.reviewCount = 0,
@@ -55,6 +58,7 @@ class Brand {
       id: map['id'] as String? ?? id,
       email: map['email'] as String? ?? '',
       phone: map['phone'] as String? ?? '',
+      deviceToken: map['deviceToken'] as String? ?? '',
       name: map['name'] as String? ?? '',
       nameAr: map['nameAr'] as String? ?? '',
       image: map['image'] as String? ?? '',

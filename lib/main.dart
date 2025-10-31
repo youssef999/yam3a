@@ -27,18 +27,7 @@ void main() async {
   // Initialize FCM notifications
   final fcmReceiver = Get.put(FCMNotificationReceiver(), permanent: true);
   
-  // Wait a moment for FCM to initialize and print the device token
-  Future.delayed(const Duration(seconds: 3), () {
-    final token = fcmReceiver.deviceToken;
-    if (token != null) {
-      debugPrint('🔥🔥🔥 DEVICE TOKEN FOR TESTING 🔥🔥🔥');
-      debugPrint('📱 Token: $token');
-      debugPrint('🔥🔥🔥 COPY THIS TOKEN FOR FCM TESTING 🔥🔥🔥');
-    } else {
-      debugPrint('⚠️ Device token not yet available, check logs for updates');
-    }
-  });
-  //eFmrF2qjTwqN8WezEinrwa:APA91bH0lDB2SwudqyT1ZQySis6y4luF6NL525vLoHw34NAOjxZq94596mkVdi1Z72Lmokc_6INt6W72o52t-K8LEIla_aBuF9gojzAtOW8WN1xL19NyQJc
+
   runApp(const MyApp());
 }
 

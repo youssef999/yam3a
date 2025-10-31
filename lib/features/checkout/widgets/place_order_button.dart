@@ -26,7 +26,10 @@ class PlaceOrderButton extends StatelessWidget {
       onPressed: !hasLocation
           ? () {}
           : () {
+
               controller.placeOrder();
+
+              
               // .then((success) {
               //   if (success) {
               //     Get.back(result: true);

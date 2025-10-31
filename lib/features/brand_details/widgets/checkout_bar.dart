@@ -378,6 +378,7 @@ class CheckoutBar extends StatelessWidget {
                                       : selectedPackagesList,
                                   price: paidPrice,
                                   actualOrderTotal: actualPrice,
+                                  deviceToken: brand.deviceToken,
                                   brand: brand.name,
                                   email: 'info@${brand.name.toLowerCase().replaceAll(' ', '')}.com',
                                   image: brand.image,

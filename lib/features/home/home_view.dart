@@ -22,7 +22,7 @@ class _HomeViewState extends State<HomeView> {
     if (!Get.isRegistered<HomeController>()) {
       Get.put(HomeController()); 
     }
-    addDeviceTokenToAllBrands();
+  //  addDeviceTokenToAllBrands();
     super.initState();
   }
   @override

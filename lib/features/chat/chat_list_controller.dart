@@ -84,6 +84,7 @@ class ChatListController extends GetxController {
       final brand = Brand(
         id: chatRoom.brandEmail,
         name: chatRoom.brandName,
+        
         nameAr: chatRoom.brandName, // Fallback to same name
         image: chatRoom.brandImage,
         email: chatRoom.brandEmail,
@@ -91,7 +92,7 @@ class ChatListController extends GetxController {
         description: '',
         descriptionEn: '',
         category: '',
-        categoryEn: '',
+        categoryEn: '', deviceToken: '',
       );
 
       // Navigate to chat view
